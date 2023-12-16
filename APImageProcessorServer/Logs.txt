@@ -1,0 +1,12 @@
+15 Dec - Opened image
+15 Dec - Wrote image to file
+16 Dec - Sent image over the network using UDP
+References:
+https://stackoverflow.com/a/20321262
+https://docs.opencv.org/3.4/dc/d84/group__core__basic.html
+https://learnopencv.com/image-resizing-with-opencv/
+https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
+https://www.opencv-srf.com/p/introduction.html
+https://www.opencv-srf.com/2017/11/load-and-display-image.html
+https://www.opencv-srf.com/2017/11/opencv-cpp-api.html
+https://www.opencv-srf.com/2018/01/save-images-and-videos-to-file.html
