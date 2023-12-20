@@ -2,7 +2,9 @@
 //
 
 #include "UDPServer.h"
+#include "ThreadPool.h"
 #include "Constants.h"
+
 
 int main()
 {
@@ -13,19 +15,19 @@ int main()
         cout << "\nError in socket creation. Application will exit now.";
         return RESPONSE_FAILURE;
     }
+
+    //ThreadPool threadPool(NUM_THREADS);
     
     short responseCode = udpServer.receiveImageSize();
-    short serverResponseCode = SERVER_POSITIVE_ACK;
-    if (responseCode == RESPONSE_FAILURE) {
-        serverResponseCode = SERVER_NEGATIVE_ACK;
-    }
-    responseCode = udpServer.sendAck(serverResponseCode);
-    if (responseCode == RESPONSE_FAILURE) {
-        cout << "\nError in sending acknowldgement. Application will exit now.";
-        return RESPONSE_FAILURE;
-    }
-    if (serverResponseCode == SERVER_POSITIVE_ACK) {
+    /*if (responseCode == RESPONSE_FAILURE) {
+        responseCode = udpServer.sendAck(SERVER_NEGATIVE_ACK);
+        if (responseCode == RESPONSE_FAILURE) {
+            cout << "\nError in sending acknowldgement. Client disconnected.";
+        }
+    }*/
+    
+    /*if (serverResponseCode == SERVER_POSITIVE_ACK) {
         udpServer.receiveImage();
-    }
+    }*/
     
 }

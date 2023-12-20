@@ -14,3 +14,20 @@ https://www.opencv-srf.com/2018/01/save-images-and-videos-to-file.html
 17 Dec - Added image size intimation by client
 Reference:
 https://en.cppreference.com/w/cpp/error/invalid_argument
+
+18 Dec - Learnt thread pooling.
+References:
+https://www.cnblogs.com/sinkinben/p/16064857.html
+https://www.youtube.com/watch?v=6re5U82KwbY
+https://en.cppreference.com/w/cpp/thread/packaged_task
+https://cplusplus.com/doc/oldtutorial/templates/
+https://cplusplus.com/reference/memory/make_shared/
+https://cplusplus.com/reference/functional/bind/
+https://www.programiz.com/cpp-programming/lambda-expression
+https://cplusplus.com/reference/type_traits/result_of/
+https://stackoverflow.com/questions/6666259/how-to-get-windows-thread-pool-to-call-class-member-function
+
+20 Dec - Integrated thread pool with server.
+References: (to overload () operator in ThreadPool which ended up not being used)
+https://en.cppreference.com/w/cpp/language/operators
+https://en.cppreference.com/w/cpp/language/copy_assignment

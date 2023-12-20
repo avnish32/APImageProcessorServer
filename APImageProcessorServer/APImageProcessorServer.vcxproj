@@ -135,10 +135,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorServer.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UDPServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
