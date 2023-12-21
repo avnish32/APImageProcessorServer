@@ -17,6 +17,11 @@ UDPServer::UDPServer()
 		}
 		else {
 			cout << "\nSocket created successfully.";
+			u_long NON_BLOCKING_MODE_TRUE = 0;
+			if (ioctlsocket(_socket, FIONBIO, &NON_BLOCKING_MODE_TRUE) == -1) {
+				cout << "\nCould not set server socket to non-blocking mode.";
+				_socket = INVALID_SOCKET;
+			}
 			sockaddr_in serverAddress;
 			serverAddress.sin_family = AF_INET;
 			serverAddress.sin_addr.s_addr = ADDR_ANY;
@@ -53,7 +58,11 @@ void displayImage(const Mat& image) {
 }
 
 void saveImage(const Mat& image) {
-	cv::String imageSaveAddress = "./Resources/savedImage.jpg";
+	auto threadId = this_thread::get_id();
+	stringstream sStream;
+	sStream << threadId;
+
+	cv::String imageSaveAddress = "./Resources/savedImage_"+sStream.str()+".jpg";
 	bool wasImageWritten = imwrite(imageSaveAddress, image);
 	if (!wasImageWritten) {
 		cout << "\nImage could not be written to file.";
@@ -104,29 +113,214 @@ short UDPServer::receiveImageSize()
 	}
 
 	//Created local thread pool so threads will be joined before UDP Server gets destroyed.
-	//This invalidates the overloaded operator() of thread pool.
+	//TODO This invalidates the overloaded operator() of thread pool.
 	ThreadPool threadPool(NUM_THREADS);
 	//_threadPool(NUM_THREADS);
 
-	//TODO infinite loop to keep listening to clients, and possibly a timeout to exit the loop
-	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
-	char* receivedData = new char[15]; //Size 9999 9999\0
-	sockaddr_in clientAddress;
-	int clientAddrSize = sizeof(clientAddress);
-	short bytesRecd = 0;
-	while (bytesRecd < 15) {
-		short bytesRecdThisIteration = recvfrom(_socket, receivedData+bytesRecd, 15, 0, (sockaddr*)&clientAddress, &clientAddrSize);
-		if (bytesRecdThisIteration <= 0) {
-			cout << "\nError in receiving image size data. Error code: " << WSAGetLastError();
-			sendAck(SERVER_NEGATIVE_ACK, clientAddress);
-			return RESPONSE_FAILURE;
+	while (true) {
+		char* receivedData = new char[60000];
+		sockaddr_in clientAddress;
+		int clientAddrSize = sizeof(clientAddress);
+
+		//_mtx.lock();
+		//cout << "\nWaiting for image size...";
+		long bytesRecdThisIteration = recvfrom(_socket, receivedData, 60000L, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+		//_mtx.unlock();
+
+		if (bytesRecdThisIteration == SOCKET_ERROR) {
+			int lastError = WSAGetLastError();
+			//cout << "\nError in receiving image size data. Error code: " << lastError;
+
+			if (lastError != WSAEWOULDBLOCK) {
+				cout << "\nError in receiving image size data. Error code: " << lastError;
+				sendAck(SERVER_NEGATIVE_ACK, clientAddress);
+				return RESPONSE_FAILURE;
+			}
+
+			//cout << "\nNo data received in this iteration. Sleeping and retrying...";
+			//this_thread::sleep_for(chrono::milliseconds(50));
+
 		}
-		bytesRecd += bytesRecdThisIteration;
+		else {
+			cout << "\nImage data recd from client.";
+			string clientAddressKey = to_string(clientAddress.sin_addr.s_addr) + ":;" + to_string(clientAddress.sin_port);
+			_mtx.lock();
+			if (_clientToQueueMap.count(clientAddressKey) <= 0) {
+				cout << "\nMap entry not found for client address key: " << clientAddressKey;
+				queue<string> newClientQueue;
+				_clientToQueueMap[clientAddressKey] = newClientQueue;
+				threadPool.enqueue(bind(&UDPServer::processImageReq, this, clientAddress));
+			}
+			
+			_clientToQueueMap[clientAddressKey].push(to_string(bytesRecdThisIteration));
+			string imageData = string(receivedData, bytesRecdThisIteration);
+			//cout << "\nImage data size: " << imageData.length();
+			_clientToQueueMap[clientAddressKey].push(string(receivedData, bytesRecdThisIteration));
+			cout << "\nImage data pushed to client queue. bytesRecdThisIterationString: "<< to_string(bytesRecdThisIteration);
+			_mtx.unlock();
+		}
+
+		delete[] receivedData;
 	}
 
-	//TODO store future here and decide where to call future.get()
-	threadPool.enqueue(bind(&UDPServer::processImageProcessingReq, this, receivedData, clientAddress));
-	//return processImageSizePayload(receivedData);
+	//TODO infinite loop to keep listening to clients, and possibly a timeout to exit the loop
+	//while (true) {
+	//	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
+	//	char* receivedData = new char[15]; //Size 9999 9999\0
+	//	sockaddr_in clientAddress;
+	//	int clientAddrSize = sizeof(clientAddress);
+	//	short bytesRecd = 0;
+	//	while (bytesRecd < 15) {
+	//		_mtx.lock();
+	//		//cout << "\nWaiting for image size...";
+	//		short bytesRecdThisIteration = recvfrom(_socket, receivedData + bytesRecd, 15, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+	//		_mtx.unlock();
+
+	//		if (bytesRecdThisIteration == SOCKET_ERROR) {
+	//			int lastError = WSAGetLastError();
+	//			//cout << "\nError in receiving image size data. Error code: " << lastError;
+
+	//			if (lastError != WSAEWOULDBLOCK) {
+	//				cout << "\nError in receiving image size data. Error code: " << lastError;
+	//				sendAck(SERVER_NEGATIVE_ACK, clientAddress);
+	//				return RESPONSE_FAILURE;
+	//			}
+
+	//			//cout << "\nNo data received in this iteration. Sleeping and retrying...";
+	//			this_thread::sleep_for(chrono::milliseconds(50));
+	//			
+	//		}
+	//		else {
+	//			bytesRecd += bytesRecdThisIteration;
+	//		}
+	//	}
+
+	//	//TODO store future here and decide where to call future.get()
+	//	threadPool.enqueue(bind(&UDPServer::processImageProcessingReq, this, receivedData, clientAddress));
+	//	//return processImageSizePayload(receivedData);
+	//}
+}
+
+void UDPServer::processImageReq(const sockaddr_in& clientAddress)
+{
+	cout << "\nThread: " << this_thread::get_id()<<" inside processImageReq.";
+	string clientAddressKey = to_string(clientAddress.sin_addr.s_addr) + ":;" + to_string(clientAddress.sin_port);
+	_mtx.lock();
+	queue<string>& clientQueue = _clientToQueueMap[clientAddressKey];
+	_mtx.unlock();
+
+	cout << "\nClient queue size: " << clientQueue.size();
+
+	cv::Size imageDimensions;
+	short responseCode;
+
+	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
+
+	responseCode = InitializeImageDimensions(imageDimensions, clientQueue);
+
+	if (responseCode == RESPONSE_FAILURE) {
+		serverResponseCodeForClient = SERVER_NEGATIVE_ACK;
+	}
+	responseCode = sendAck(serverResponseCodeForClient, clientAddress);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nCould not send acknowledgement to client.";
+		return;
+	}
+	cout << "\nAck sent.";
+
+	long imageBytesRecd = 0, imageBytesLeftToReceive = imageDimensions.width * imageDimensions.height * 3;
+	char* recdImageData = new char[imageBytesLeftToReceive];
+	string imageDataString = "";
+
+	while (imageBytesLeftToReceive > 0) {
+		
+		if (clientQueue.empty()) {
+			continue;
+		}
+		
+		long lastPayloadSize = 0;
+		try {
+			lastPayloadSize = stol(clientQueue.front());
+			clientQueue.pop();
+		}
+		catch (invalid_argument) {
+			cout << "\nERROR::Invalid payload size value found in queue.";
+		}
+
+		cout << "\nLast payload size for image data: " << lastPayloadSize;
+
+		if (clientQueue.empty()) {
+			cout << "\nClient queue is empty before fetching image data.";
+		}
+		//strcpy_s(recdImageData + imageBytesRecd, lastPayloadSize, clientQueue.front().c_str());
+		imageDataString += clientQueue.front();
+		clientQueue.pop();
+
+		cout << "\nAfter popping image data payalod from queue. Queue size: "<<clientQueue.size();
+
+		imageBytesRecd += lastPayloadSize;
+		imageBytesLeftToReceive -= lastPayloadSize;		
+
+		cout << "\nImage bytes recd: " << imageBytesRecd << " | image bytes left to receive: " << imageBytesLeftToReceive;
+	}
+	Mat constructedImage = constructImageFromData(&(imageDataString[0]), imageDimensions);
+	//displayImage(constructedImage);
+	saveImage(constructedImage);
+
+	//TODO remove entry from map once processing completes for the client
+}
+
+short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue)
+{
+	long lastPayloadSize = 0, bytesRecd = 0;
+	string imageSizeString = "";
+
+	while (bytesRecd < 15) {
+
+		cout << "\nInitializeImageDimensions::Before popping from queue.";
+
+		if (clientQueue.empty()) {
+			cout << "\nClient queue is empty before fetching payload size string.";
+		}
+		string payloadSizeString = clientQueue.front();
+		cout << "\nPayload size string from queue: " << payloadSizeString;
+
+		try {
+			cout << "\nQueue size before popping: " << clientQueue.size();
+			clientQueue.pop();
+		}
+		catch (exception& ex) {
+			cout << "\nException while popping: " << ex.what();
+		}
+		
+
+		
+
+		try {
+			lastPayloadSize = stol(payloadSizeString);
+		}
+		catch (invalid_argument iaexp) {
+			cout << "\nERROR::Invalid message size string found in queue.";
+			return RESPONSE_FAILURE;
+		}
+
+		if (clientQueue.empty()) {
+			cout << "\nClient queue is empty before fetching image size payload.";
+		}
+
+		//string imageSizePayloadInQueue = clientQueue.front();
+		imageSizeString += clientQueue.front();
+		cout << "\nimageSizePayloadInQueue: " << imageSizeString;
+		//strcpy_s(imageSizeString + bytesRecd, lastPayloadSize, clientQueue.front());
+		//strcpy(imageSizeString + lastPayloadSize, clientQueue->front());
+		clientQueue.pop();
+
+		bytesRecd += lastPayloadSize;
+		cout << "\nImage size string at iteration end: " << imageSizeString;
+	}
+	cout << "\nQueue size after initializing image dimensions: " << clientQueue.size();
+	return processImageSizePayload(&imageSizeString[0], imageDimensions);
+	
 }
 
 void UDPServer::processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress)
@@ -202,6 +396,7 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 		return RESPONSE_FAILURE;
 	}
 
+	const sockaddr_in originalClientAddress = sockaddr_in(clientAddress);
 	long imageSize = imageDimensions.width * imageDimensions.height * 3;
 	char* recdImageData = new char[imageSize];
 	int clientAddrSize = sizeof(clientAddress);
@@ -209,25 +404,45 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 	cout << "\nImage size before receiving: " << imageSize;
 	while (bytesRecd < imageSize) {
 		int bytesRecdThisIteration;
+		char* dataRecdThisIteration = new char[60000];
 
 		cout << "\nBytes left to receive: " << bytesLeftToReceive;
 
 		if (bytesLeftToReceive >= 60000l) {
-			bytesRecdThisIteration = recvfrom(_socket, recdImageData + bytesRecd, 60000l, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+			//TODO try locking and unlocking socket here instead of for the whole loop
+			bytesRecdThisIteration = recvfrom(_socket, dataRecdThisIteration, 60000l, 0, (sockaddr*)&clientAddress, &clientAddrSize);
 		}
 		else {
-			bytesRecdThisIteration = recvfrom(_socket, recdImageData + bytesRecd, bytesLeftToReceive, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+			bytesRecdThisIteration = recvfrom(_socket, dataRecdThisIteration, bytesLeftToReceive, 0, (sockaddr*)&clientAddress, &clientAddrSize);
 		}
 		
-		if (bytesRecdThisIteration <= 0) {
-			cout << "\nError in receiving image data. Error code: "<<WSAGetLastError();
-			_mtx.unlock();
-			return RESPONSE_FAILURE;
+		if (bytesRecdThisIteration == SOCKET_ERROR) {
+			int lastError = WSAGetLastError();
+			//cout << "\nError in receiving image size data. Error code: " << lastError;
+
+			if (lastError != WSAEWOULDBLOCK) {
+				cout << "\nError in receiving image data. Error code: " << lastError;
+				_mtx.unlock();
+				return RESPONSE_FAILURE;
+			}
+
+			//cout << "\nNo data received in this iteration. Sleeping and retrying...";
+			this_thread::sleep_for(chrono::milliseconds(50));
+
 		}
-		bytesRecd += bytesRecdThisIteration;
-		bytesLeftToReceive -= bytesRecdThisIteration;
+		else {
+
+			bytesRecd += bytesRecdThisIteration;
+			bytesLeftToReceive -= bytesRecdThisIteration;
+		}		
 		
-		cout << "\nBytes recd this iteration: " << bytesRecdThisIteration;
+		if (originalClientAddress.sin_addr.s_addr != clientAddress.sin_addr.s_addr || originalClientAddress.sin_port != clientAddress.sin_port) {
+			cout << "\nCLIENT ADDRESS CHANGED.";
+		}
+		cout << "\n Thread: "<<this_thread::get_id()<<" Bytes recd this iteration: " << bytesRecdThisIteration;
+		cout << "\nOriginal client: " << originalClientAddress.sin_addr.s_addr << ":" << originalClientAddress.sin_port << " | clientAddress: " << clientAddress.sin_addr.s_addr << ":" << clientAddress.sin_port;
+		delete[] dataRecdThisIteration;
+
 	}
 	_mtx.unlock();
 

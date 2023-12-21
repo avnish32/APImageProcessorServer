@@ -31,3 +31,6 @@ https://stackoverflow.com/questions/6666259/how-to-get-windows-thread-pool-to-ca
 References: (to overload () operator in ThreadPool which ended up not being used)
 https://en.cppreference.com/w/cpp/language/operators
 https://en.cppreference.com/w/cpp/language/copy_assignment
+
+21 Dec - Implemented concurrent client handling capability on server by using a separate queue for each client and saving queue for clients in a map. Server can now handle concurrent requests, although order of receiving payload is not always the same. Need to implement sequencing by sending a sequence number with each payload, storing them at server in a map of sequence_num->image_data, then iterating through i=0 to number of payloads and appending value of each entry to the imageDataString.
+No references.
