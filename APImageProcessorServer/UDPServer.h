@@ -24,7 +24,8 @@ private:
 	void processImageReq(const sockaddr_in& clientAddress);
 	short InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue);
 	void processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress);
-	const Mat constructImageFromData(char* recdImageData, const cv::Size& imageDimensions);
+	const Mat constructImageFromData(const char* imageData, const cv::Size& imageDimensions);
+	const Mat constructImageFromData(map<u_int, string> imageDataMap, const cv::Size& imageDimensions);
 	short processImageSizePayload(char* receivedData, cv::Size& imageDimensions);
 
 public:

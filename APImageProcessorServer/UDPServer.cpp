@@ -103,6 +103,56 @@ const vector<std::string> splitString(char* inputString, char delimiter) {
 	return outputVector;
 }
 
+const vector<string> splitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength) {
+	std::string currentWord = "";
+	int numberOfCurrentSplits = 1;
+	vector<string> outputVector;
+	//char* charPtr = inputString;
+	//cout << "\nString array at beginning: " << *stringArray;
+
+	for (int i = 0; i < inputStringLength; i++) {
+		char currentChar = *(inputString + i);
+		//cout << "\nCurrent word: " << currentWord<<" | current char = "<<currentChar;
+		if (currentChar == delimiter && numberOfCurrentSplits < numberOfSplits) {
+			outputVector.push_back(currentWord);
+			currentWord = "";
+			numberOfCurrentSplits++;
+		}
+		else {
+			currentWord += currentChar;
+		}
+		//++charPtr;
+	}
+
+	if (currentWord.length() > 0) {
+		outputVector.push_back(currentWord);
+	}
+
+	//cout << "\nString after splitting: ";
+	/*auto iter = outputVector.begin();
+	while (iter != outputVector.end()) {
+		cout << *iter << "|";
+		iter++;
+	}*/
+	//cout << "\nReturning output vector. ";
+	if (outputVector.size() < numberOfSplits) {
+		cout << "\nUnexpected split. Original string: " << inputString;
+	}
+	return outputVector;
+}
+
+void checkImageDataMapIntegrity(map<u_int, string>* imageDataMap, const u_int& expectedNumberOfPayloads) {
+	cout << "\nChecking integrity of image data map.";
+
+	for (u_int i = 1; i <= expectedNumberOfPayloads; i++) {
+		if (imageDataMap->count(i) == 0) {
+			cout << "\nERROR::Data not present in map for payload sequence " << i;
+		}
+	}
+
+	cout << "\nImage data map integrity checked.";
+}
+
 //------------Member functions
 
 short UDPServer::receiveImageSize()
@@ -118,13 +168,13 @@ short UDPServer::receiveImageSize()
 	//_threadPool(NUM_THREADS);
 
 	while (true) {
-		char* receivedData = new char[60000];
+		char* receivedData = new char[60025];
 		sockaddr_in clientAddress;
 		int clientAddrSize = sizeof(clientAddress);
 
 		//_mtx.lock();
 		//cout << "\nWaiting for image size...";
-		long bytesRecdThisIteration = recvfrom(_socket, receivedData, 60000L, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+		long bytesRecdThisIteration = recvfrom(_socket, receivedData, 60025L, 0, (sockaddr*)&clientAddress, &clientAddrSize);
 		//_mtx.unlock();
 
 		if (bytesRecdThisIteration == SOCKET_ERROR) {
@@ -152,10 +202,10 @@ short UDPServer::receiveImageSize()
 				threadPool.enqueue(bind(&UDPServer::processImageReq, this, clientAddress));
 			}
 			
-			_clientToQueueMap[clientAddressKey].push(to_string(bytesRecdThisIteration));
+			//_clientToQueueMap[clientAddressKey].push(to_string(bytesRecdThisIteration));
 			string imageData = string(receivedData, bytesRecdThisIteration);
-			//cout << "\nImage data size: " << imageData.length();
-			_clientToQueueMap[clientAddressKey].push(string(receivedData, bytesRecdThisIteration));
+			_clientToQueueMap[clientAddressKey].push(imageData);
+			cout << "\nImage data size: " << imageData.length();
 			cout << "\nImage data pushed to client queue. bytesRecdThisIterationString: "<< to_string(bytesRecdThisIteration);
 			_mtx.unlock();
 		}
@@ -229,8 +279,15 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 	cout << "\nAck sent.";
 
 	long imageBytesRecd = 0, imageBytesLeftToReceive = imageDimensions.width * imageDimensions.height * 3;
-	char* recdImageData = new char[imageBytesLeftToReceive];
+	
+	u_int expectedNumberOfPayloads = imageBytesLeftToReceive / 60000;
+	if (imageBytesLeftToReceive % 60000 > 0) {
+		expectedNumberOfPayloads++;
+	}
+
+	//char* recdImageData = new char[imageBytesLeftToReceive];
 	string imageDataString = "";
+	map<u_int, string> imagePayloadSeqMap;
 
 	while (imageBytesLeftToReceive > 0) {
 		
@@ -238,7 +295,7 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 			continue;
 		}
 		
-		long lastPayloadSize = 0;
+		/*long lastPayloadSize = 0;
 		try {
 			lastPayloadSize = stol(clientQueue.front());
 			clientQueue.pop();
@@ -247,23 +304,55 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 			cout << "\nERROR::Invalid payload size value found in queue.";
 		}
 
-		cout << "\nLast payload size for image data: " << lastPayloadSize;
+		cout << "\nLast payload size for image data: " << lastPayloadSize;*/
 
 		if (clientQueue.empty()) {
 			cout << "\nClient queue is empty before fetching image data.";
 		}
-		//strcpy_s(recdImageData + imageBytesRecd, lastPayloadSize, clientQueue.front().c_str());
-		imageDataString += clientQueue.front();
+		
+		if (clientQueue.front().length() < 17) {
+			cout << "\nUnexpected msg found in queue. Msg: " << clientQueue.front();
+			clientQueue.pop();
+		}
+		cout << "\nQueue msg size before splitting: " << clientQueue.front().length();
+		vector<string> splitImageDataPayload = splitString(&(clientQueue.front()[0]), ' ', 5, clientQueue.front().length());
+		cout << "\nSplit image payload size: " << splitImageDataPayload.size();
+
+		//TODO shift hardcoded values to constants
+		if (splitImageDataPayload.size() != 5 || splitImageDataPayload.at(0) != "Seq" || splitImageDataPayload.at(2) != "Size") {
+			cout << "\nERROR: Image data payload in incorrect format. First word: "<<splitImageDataPayload.at(0);
+		}
+
+		u_int payloadSeqNum = 0, payloadSize = 0;
+		try {
+			payloadSeqNum = stoi(splitImageDataPayload.at(1));
+			payloadSize = stoi(splitImageDataPayload.at(3));
+		}
+		catch (invalid_argument) {
+			cout << "\nERROR: Image data payload sequence num or size not an int. Seq num: " << splitImageDataPayload.at(1) 
+				<< " | Size:"<<splitImageDataPayload.at(3);
+		}
+
+		
+		imagePayloadSeqMap[payloadSeqNum] = splitImageDataPayload.at(4);
+		cout << "\nImage data after splitting: " << splitImageDataPayload.at(0) <<" | "<<splitImageDataPayload.at(1)<<" | "
+			<<splitImageDataPayload.at(2)<<" | "<<splitImageDataPayload.at(3)<<" | Length of image data: "<<splitImageDataPayload.at(4).length();
+		//imageDataString += splitImageDataPayload.at(4);
 		clientQueue.pop();
 
-		cout << "\nAfter popping image data payalod from queue. Queue size: "<<clientQueue.size();
+		cout << "\nAfter popping image data payload from queue. Queue size: "<<clientQueue.size();
 
-		imageBytesRecd += lastPayloadSize;
-		imageBytesLeftToReceive -= lastPayloadSize;		
+		imageBytesRecd += payloadSize;
+		imageBytesLeftToReceive -= payloadSize;
 
 		cout << "\nImage bytes recd: " << imageBytesRecd << " | image bytes left to receive: " << imageBytesLeftToReceive;
 	}
-	Mat constructedImage = constructImageFromData(&(imageDataString[0]), imageDimensions);
+
+	//TODO check for data integrity
+	checkImageDataMapIntegrity(&imagePayloadSeqMap, expectedNumberOfPayloads);
+
+	Mat constructedImage = constructImageFromData(imagePayloadSeqMap, imageDimensions);
+	//Mat constructedImage = constructImageFromData(&imageDataString[0], imageDimensions);
 	//displayImage(constructedImage);
 	saveImage(constructedImage);
 
@@ -279,7 +368,7 @@ short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue
 
 		cout << "\nInitializeImageDimensions::Before popping from queue.";
 
-		if (clientQueue.empty()) {
+		/*if (clientQueue.empty()) {
 			cout << "\nClient queue is empty before fetching payload size string.";
 		}
 		string payloadSizeString = clientQueue.front();
@@ -302,7 +391,7 @@ short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue
 		catch (invalid_argument iaexp) {
 			cout << "\nERROR::Invalid message size string found in queue.";
 			return RESPONSE_FAILURE;
-		}
+		}*/
 
 		if (clientQueue.empty()) {
 			cout << "\nClient queue is empty before fetching image size payload.";
@@ -315,7 +404,7 @@ short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue
 		//strcpy(imageSizeString + lastPayloadSize, clientQueue->front());
 		clientQueue.pop();
 
-		bytesRecd += lastPayloadSize;
+		bytesRecd += imageSizeString.length();
 		cout << "\nImage size string at iteration end: " << imageSizeString;
 	}
 	cout << "\nQueue size after initializing image dimensions: " << clientQueue.size();
@@ -448,7 +537,8 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 
 	//TODO move all image processing out of here and check hash
 	cout << "\nAll data recd. Re-shaping image now...";
-	const Mat constructedImage = constructImageFromData(recdImageData, imageDimensions);
+	map<u_int, string> dummyMap;
+	const Mat constructedImage = constructImageFromData(dummyMap, imageDimensions);
 	displayImage(constructedImage);
 	saveImage(constructedImage);
 
@@ -456,11 +546,39 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 
 }
 
-const Mat UDPServer::constructImageFromData(char* imageData, const cv::Size& imageDimensions) {
+const Mat UDPServer::constructImageFromData(map<u_int, string> imageDataMap, const cv::Size& imageDimensions) {
 	Mat recdImage = Mat(imageDimensions, CV_8UC3);
-	//TODO check if below works
-	//recdImage.data = (uchar*) recdImageData;
-	//long recdImgData;
+	cout << "\nConstructing image. Image data map size: " << imageDataMap.size();
+	u_int numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
+	int currentImageFragmentByte = 0;
+	const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+
+	for (int i = 0; i < imageDimensions.height; i++) {
+		for (int j = 0; j < imageDimensions.width; j++) {
+			//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
+			if (currentImageFragmentByte >= 60000) {
+				cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+				currentImageFragment++;
+				currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+				currentImageFragmentByte = 0;
+			}
+
+			recdImage.at<Vec3b>(i, j) = Vec3b(*(currentImageFragmentData + currentImageFragmentByte),
+				*(currentImageFragmentData + currentImageFragmentByte + 1), 
+				*(currentImageFragmentData + currentImageFragmentByte + 2));
+			currentImageFragmentByte += 3;
+		}
+	}
+
+	cout << "\nImage re-shaped.";
+	return recdImage;
+}
+
+const Mat UDPServer::constructImageFromData(const char* imageData, const cv::Size& imageDimensions) {
+	Mat recdImage = Mat(imageDimensions, CV_8UC3);
+
+	cout << "\nConstructing image from string. Image data length: " << strlen(imageData);
+
 	for (int i = 0; i < imageDimensions.height; i++) {
 		for (int j = 0; j < imageDimensions.width; j++) {
 			recdImage.at<Vec3b>(i, j) = Vec3b(*(imageData), *(imageData + 1), *(imageData + 2));
