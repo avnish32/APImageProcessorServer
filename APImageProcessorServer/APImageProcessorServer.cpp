@@ -5,9 +5,17 @@
 #include "ThreadPool.h"
 #include "Constants.h"
 
+#include<fstream>
+
 
 int main()
 {
+    //Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
+    //Performs 9 times faster when output is written to file.
+    std::ofstream out("outLogs.txt");
+    std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
+    std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+
     std::cout << "Hello World!\n";
 
     UDPServer udpServer;
@@ -30,4 +38,5 @@ int main()
         udpServer.receiveImage();
     }*/
     
+    std::cout.rdbuf(coutbuf); //reset to standard output again
 }

@@ -22,16 +22,20 @@ private:
 	//which is a deadlock.
 
 	void processImageReq(const sockaddr_in& clientAddress);
+	short CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
+		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
+		const sockaddr_in& clientAddress);
 	short InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue);
 	void processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress);
 	const Mat constructImageFromData(const char* imageData, const cv::Size& imageDimensions);
-	const Mat constructImageFromData(map<u_int, string> imageDataMap, const cv::Size& imageDimensions);
+	const Mat constructImageFromData(map<u_short, string> imageDataMap, const cv::Size& imageDimensions);
 	short processImageSizePayload(char* receivedData, cv::Size& imageDimensions);
+	vector<u_short> calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 
 public:
 	UDPServer();
 	~UDPServer();
-	short sendAck(short serverResponseCode, const sockaddr_in& clientAddress);
+	short sendServerResponse(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
 	short receiveImageSize();
 	short receiveImage(const cv::Size& imageDimensions, const sockaddr_in& clientAddress); //TODO use abstract class here: Server -> UDPServer -> ImageReceivingServer
 	bool isValid();

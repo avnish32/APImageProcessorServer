@@ -1,7 +1,12 @@
 #include "UDPServer.h"
 #include "Constants.h"
 
+//TODO check if needed in final code
+#include<format>
+
 #pragma comment (lib, "ws2_32.lib")
+
+using namespace std;
 
 UDPServer::UDPServer()
 {
@@ -58,11 +63,19 @@ void displayImage(const Mat& image) {
 }
 
 void saveImage(const Mat& image) {
+
+	//Below snippet to convert thread id to string taken from https://stackoverflow.com/a/19255203
 	auto threadId = this_thread::get_id();
 	stringstream sStream;
 	sStream << threadId;
 
-	cv::String imageSaveAddress = "./Resources/savedImage_"+sStream.str()+".jpg";
+	//Below snippet to convert chrono::time_point to string taken from https://stackoverflow.com/a/46240575
+	//using namespace std::chrono_literals;
+	std::chrono::time_point tp = chrono::system_clock::now();
+	std::string timestamp = std::format("{:%H%M%S}", tp);
+
+	//string timestamp = std::format("{:%H%M%s}", nowTime);
+	cv::String imageSaveAddress = "./Resources/savedImage_"+sStream.str()+"_"+timestamp+".jpg";
 	bool wasImageWritten = imwrite(imageSaveAddress, image);
 	if (!wasImageWritten) {
 		cout << "\nImage could not be written to file.";
@@ -141,16 +154,18 @@ const vector<string> splitString(char* inputString, const char& delimiter, const
 	return outputVector;
 }
 
-void checkImageDataMapIntegrity(map<u_int, string>* imageDataMap, const u_int& expectedNumberOfPayloads) {
+short checkImageDataMapIntegrity(map<u_short, string>* imageDataMap, const u_int& expectedNumberOfPayloads) {
 	cout << "\nChecking integrity of image data map.";
 
 	for (u_int i = 1; i <= expectedNumberOfPayloads; i++) {
 		if (imageDataMap->count(i) == 0) {
 			cout << "\nERROR::Data not present in map for payload sequence " << i;
+			return RESPONSE_FAILURE;
 		}
 	}
 
 	cout << "\nImage data map integrity checked.";
+	return RESPONSE_SUCCESS;
 }
 
 //------------Member functions
@@ -183,7 +198,7 @@ short UDPServer::receiveImageSize()
 
 			if (lastError != WSAEWOULDBLOCK) {
 				cout << "\nError in receiving image size data. Error code: " << lastError;
-				sendAck(SERVER_NEGATIVE_ACK, clientAddress);
+				sendServerResponse(SERVER_NEGATIVE_ACK, clientAddress, nullptr);
 				return RESPONSE_FAILURE;
 			}
 
@@ -271,7 +286,7 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 	if (responseCode == RESPONSE_FAILURE) {
 		serverResponseCodeForClient = SERVER_NEGATIVE_ACK;
 	}
-	responseCode = sendAck(serverResponseCodeForClient, clientAddress);
+	responseCode = sendServerResponse(serverResponseCodeForClient, clientAddress, nullptr);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nCould not send acknowledgement to client.";
 		return;
@@ -280,18 +295,25 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 
 	long imageBytesRecd = 0, imageBytesLeftToReceive = imageDimensions.width * imageDimensions.height * 3;
 	
-	u_int expectedNumberOfPayloads = imageBytesLeftToReceive / 60000;
+	u_short expectedNumberOfPayloads = imageBytesLeftToReceive / 60000;
 	if (imageBytesLeftToReceive % 60000 > 0) {
 		expectedNumberOfPayloads++;
 	}
 
 	//char* recdImageData = new char[imageBytesLeftToReceive];
 	string imageDataString = "";
-	map<u_int, string> imagePayloadSeqMap;
+	map<u_short, string> imagePayloadSeqMap;
 
+	auto lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
 	while (imageBytesLeftToReceive > 0) {
 		
 		if (clientQueue.empty()) {
+			responseCode = CheckForTimeout(lastImagePayloadRecdTime, imagePayloadSeqMap, expectedNumberOfPayloads, clientAddress);
+			if (responseCode == RESPONSE_FAILURE) {
+				cout<<"\nError when sending response to client on timeout.";
+				//TODO client cleanup
+				return;
+			}
 			continue;
 		}
 		
@@ -319,8 +341,9 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 		cout << "\nSplit image payload size: " << splitImageDataPayload.size();
 
 		//TODO shift hardcoded values to constants
-		if (splitImageDataPayload.size() != 5 || splitImageDataPayload.at(0) != "Seq" || splitImageDataPayload.at(2) != "Size") {
+		if (splitImageDataPayload.size() != 5 || splitImageDataPayload.at(0) != SEQUENCE_PAYLOAD_KEY || splitImageDataPayload.at(2) != SIZE_PAYLOAD_KEY) {
 			cout << "\nERROR: Image data payload in incorrect format. First word: "<<splitImageDataPayload.at(0);
+			return;
 		}
 
 		u_int payloadSeqNum = 0, payloadSize = 0;
@@ -331,6 +354,7 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 		catch (invalid_argument) {
 			cout << "\nERROR: Image data payload sequence num or size not an int. Seq num: " << splitImageDataPayload.at(1) 
 				<< " | Size:"<<splitImageDataPayload.at(3);
+			return;
 		}
 
 		
@@ -346,10 +370,18 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 		imageBytesLeftToReceive -= payloadSize;
 
 		cout << "\nImage bytes recd: " << imageBytesRecd << " | image bytes left to receive: " << imageBytesLeftToReceive;
+		lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
 	}
 
-	//TODO check for data integrity
-	checkImageDataMapIntegrity(&imagePayloadSeqMap, expectedNumberOfPayloads);
+	//Check for data integrity - hash? - can match hash only after re-creating the image
+	//Removed data integrity check as above loop is exited only when all bytes are received.
+	
+	cout << "\nAll image data received. Sending positive ACK to client.";
+	responseCode = sendServerResponse(SERVER_POSITIVE_ACK, clientAddress, nullptr);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nCould not send ACK to client.";
+		return;
+	}
 
 	Mat constructedImage = constructImageFromData(imagePayloadSeqMap, imageDimensions);
 	//Mat constructedImage = constructImageFromData(&imageDataString[0], imageDimensions);
@@ -357,6 +389,41 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 	saveImage(constructedImage);
 
 	//TODO remove entry from map once processing completes for the client
+	_clientToQueueMap.erase(clientAddressKey);
+}
+
+short UDPServer::CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime, 
+	std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads, 
+	const sockaddr_in& clientAddress)
+{
+	short responseCode;
+
+	//Below snippet to calculate elapsed time taken from https://stackoverflow.com/a/31657669
+	auto now = chrono::high_resolution_clock::now();
+	auto timeElapsedSinceLastImagePayloadRecd = chrono::duration_cast<chrono::milliseconds>(now - lastImagePayloadRecdTime);
+	
+	// cout << "\ntimeElapsedSinceLastImagePayloadRecd: " << timeElapsedSinceLastImagePayloadRecd.count();
+
+	if (timeElapsedSinceLastImagePayloadRecd.count() < IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS) {
+		return RESPONSE_SUCCESS;
+	}
+	
+	vector<u_short> missingSeqNumbers = calculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
+	if (missingSeqNumbers.size() > 0) {
+		responseCode = sendServerResponse(SERVER_NEGATIVE_ACK, clientAddress, &missingSeqNumbers);
+	}
+	else {
+		responseCode = RESPONSE_SUCCESS;
+	}
+	
+	lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
+
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nERROR: Could not send response to client.";
+		return RESPONSE_FAILURE;
+	}
+	
+	return RESPONSE_SUCCESS;
 }
 
 short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue)
@@ -420,7 +487,7 @@ void UDPServer::processImageProcessingReq(char* receivedImageSizeData, const soc
 	if (responseCode == RESPONSE_FAILURE) {
 		serverResponseCodeForClient = SERVER_NEGATIVE_ACK;
 	}
-	responseCode = sendAck(serverResponseCodeForClient, clientAddress);
+	responseCode = sendServerResponse(serverResponseCodeForClient, clientAddress, nullptr);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nCould not send acknowledgement to client.";
 		return;
@@ -440,7 +507,7 @@ short UDPServer::processImageSizePayload(char* receivedData, cv::Size& imageDime
 	const vector<std::string> splitImageSizeData = splitString(receivedData, ' ');
 
 	//Data validity check
-	if (splitImageSizeData.at(0) != "Size" || splitImageSizeData.size() < 3) {
+	if (splitImageSizeData.at(0) != SIZE_PAYLOAD_KEY || splitImageSizeData.size() < 3) {
 		cout << "\nClient sent image size data in wrong format.";
 		return RESPONSE_FAILURE;
 	}
@@ -455,7 +522,19 @@ short UDPServer::processImageSizePayload(char* receivedData, cv::Size& imageDime
 	return RESPONSE_SUCCESS;
 }
 
-short UDPServer::sendAck(short serverResponseCode, const sockaddr_in& clientAddress)
+vector<u_short> UDPServer::calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads)
+{
+	vector<u_short> missingSeqNumbers;
+
+	for (u_short i = 1; i <= expectedNumberOfPayloads; i++) {
+		if (receivedPayloadsMap.count(i) == 0) {
+			missingSeqNumbers.push_back(i);
+		}
+	}
+	return missingSeqNumbers;
+}
+
+short UDPServer::sendServerResponse(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers)
 {
 	cout << "\nEntered sendAck.";
 	_mtx.lock();
@@ -465,7 +544,18 @@ short UDPServer::sendAck(short serverResponseCode, const sockaddr_in& clientAddr
 		return RESPONSE_FAILURE;
 		
 	}
-	short bytesSent = sendto(_socket, (char*)&serverResponseCode, sizeof(serverResponseCode), 0, (const sockaddr*)&clientAddress, sizeof(clientAddress));
+
+	string missingSeqNumbersString = "";
+	if (missingSeqNumbers != nullptr) {
+		for (const u_short& missingSeqNumber : *missingSeqNumbers) {
+			missingSeqNumbersString.append(to_string(missingSeqNumber)).append(" ");
+		}
+	}
+	string serverResponsePayload = string("RES ").append(to_string(serverResponseCode)).append(" ").append(missingSeqNumbersString).append("\0");
+	cout << "\nServer response string: " << serverResponsePayload <<" | string length: "<<serverResponsePayload.length();
+
+	//'\0' not counted in string.length(), hence adding 1 to the payload size parameter below.
+	short bytesSent = sendto(_socket, &serverResponsePayload[0], serverResponsePayload.length()+1, 0, (const sockaddr*)&clientAddress, sizeof(clientAddress));
 	_mtx.unlock();
 	cout << "\nAfter unlocking socket in sendAck.";
 
@@ -537,7 +627,7 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 
 	//TODO move all image processing out of here and check hash
 	cout << "\nAll data recd. Re-shaping image now...";
-	map<u_int, string> dummyMap;
+	map<u_short, string> dummyMap;
 	const Mat constructedImage = constructImageFromData(dummyMap, imageDimensions);
 	displayImage(constructedImage);
 	saveImage(constructedImage);
@@ -546,7 +636,7 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 
 }
 
-const Mat UDPServer::constructImageFromData(map<u_int, string> imageDataMap, const cv::Size& imageDimensions) {
+const Mat UDPServer::constructImageFromData(map<u_short, string> imageDataMap, const cv::Size& imageDimensions) {
 	Mat recdImage = Mat(imageDimensions, CV_8UC3);
 	cout << "\nConstructing image. Image data map size: " << imageDataMap.size();
 	u_int numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
@@ -557,7 +647,9 @@ const Mat UDPServer::constructImageFromData(map<u_int, string> imageDataMap, con
 		for (int j = 0; j < imageDimensions.width; j++) {
 			//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
 			if (currentImageFragmentByte >= 60000) {
-				cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+				
+				//cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+
 				currentImageFragment++;
 				currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
 				currentImageFragmentByte = 0;

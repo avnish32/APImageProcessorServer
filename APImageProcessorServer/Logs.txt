@@ -37,4 +37,11 @@ No references.
 
 22 Dec - Added sequence number to payload so order is maintained while re-constructing image.
 22 Dec - Stopped enqueueing last payload size. Wasn't using it, and it was somehow intermittently pushing an empty message into the queue.
-No references.
+22 Dec - Ensured data integrity - client will keep sending data until server returns positive ack. Used a map to keep track of missing sequence numbers. Now client thread does not need to sleep between sending payloads. Server sends a nack if no data was recd from client after a timeout period (currently 2 secs).
+22 Dec - Tested with 8 parallel threads on a thread pool of 4 threads.
+References:
+https://gist.github.com/listnukira/4045436 for displaying ip and port of sockets in different client threads. Same port was displayed.
+https://stackoverflow.com/a/19255203 to convert thread id to string.
+https://stackoverflow.com/a/46240575 to convert current system time to string.
+https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2 to redirect cout buffer to external file.
+

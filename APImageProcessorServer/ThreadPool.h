@@ -28,23 +28,26 @@ public:
 	//void operator() (int numThreads);
 
 	template<typename F, typename ... Args>
-	future <result_of_t<F(Args...)>> enqueue(F&& fn, Args&& ...args);
+	future <invoke_result_t<F, Args...>> enqueue(F&& fn, Args&& ...args);
 
 };
 
 template<typename F, typename ...Args>
-inline future<result_of_t<F(Args...)>> ThreadPool::enqueue(F&& fn, Args&& ...args)
+inline future<invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& fn, Args&& ...args)
 {
 	//Wrapping the user submitted task F and its arguments Args into a function with no arguments
 	//and void return type as the task queue is made up of generalized functions that do not take
 	//any arguments and do not return anything.
 	
 	//Determining type of the result returned by the function type F when called with argument type Args...
-	using return_type = result_of_t <F(Args...)>;
+	using return_type = invoke_result_t<F,Args...>;
+
 	//Binding the function fn and its arguments args together into a function that does not take any arguments.
-	auto bindedFunction = bind(fn, args...);
+	auto bindedFunction = bind(forward<F>(fn), forward<Args>(args)...);
+
 	//Packaging the binded function into a task to obtain its future.
 	packaged_task<return_type()> packagedTask(bindedFunction);
+
 	//Making a shared pointer of the task as packaged_task class does not implement a copy constructor
 	auto taskSharedPtr = make_shared<packaged_task<return_type()>>(move(packagedTask));
 
