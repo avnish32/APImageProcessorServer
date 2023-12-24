@@ -1,5 +1,6 @@
 #include "UDPServer.h"
 #include "Constants.h"
+#include "ImageProcessor.h"
 
 //TODO check if needed in final code
 #include<format>
@@ -52,17 +53,7 @@ UDPServer::~UDPServer()
 }
 
 //---------------Utility functions
-
-void displayImage(const Mat& image) {
-	cv::String windowName = "Received Image";
-	//namedWindow(windowName, WINDOW_KEEPRATIO);
-	imshow(windowName, image);
-
-	waitKey(0);
-	destroyWindow(windowName);
-}
-
-void saveImage(const Mat& image) {
+cv::String GetAddressToSaveImage() {
 
 	//Below snippet to convert thread id to string taken from https://stackoverflow.com/a/19255203
 	auto threadId = this_thread::get_id();
@@ -75,12 +66,8 @@ void saveImage(const Mat& image) {
 	std::string timestamp = std::format("{:%H%M%S}", tp);
 
 	//string timestamp = std::format("{:%H%M%s}", nowTime);
-	cv::String imageSaveAddress = "./Resources/savedImage_"+sStream.str()+"_"+timestamp+".jpg";
-	bool wasImageWritten = imwrite(imageSaveAddress, image);
-	if (!wasImageWritten) {
-		cout << "\nImage could not be written to file.";
-		return;
-	}
+	cv::String imageSaveAddress = "./Resources/savedImage_" + sStream.str() + "_" + timestamp + ".jpg";
+	return imageSaveAddress;
 }
 
 const vector<std::string> splitString(char* inputString, char delimiter) {
@@ -383,12 +370,12 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 		return;
 	}
 
-	Mat constructedImage = constructImageFromData(imagePayloadSeqMap, imageDimensions);
-	//Mat constructedImage = constructImageFromData(&imageDataString[0], imageDimensions);
-	//displayImage(constructedImage);
-	saveImage(constructedImage);
+	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions);
+	imageProcessor.DisplayImage("Received Image");
+	imageProcessor.SaveImage(GetAddressToSaveImage());
+	
 
-	//TODO remove entry from map once processing completes for the client
+	//Removing entry from map once processing completes for the client
 	_clientToQueueMap.erase(clientAddressKey);
 }
 
@@ -629,8 +616,10 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 	cout << "\nAll data recd. Re-shaping image now...";
 	map<u_short, string> dummyMap;
 	const Mat constructedImage = constructImageFromData(dummyMap, imageDimensions);
-	displayImage(constructedImage);
-	saveImage(constructedImage);
+
+	ImageProcessor imageProcessor(constructedImage);
+	imageProcessor.DisplayImage("Received image");
+	imageProcessor.SaveImage(GetAddressToSaveImage());
 
 	return RESPONSE_SUCCESS;
 

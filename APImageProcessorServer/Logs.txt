@@ -45,3 +45,9 @@ https://stackoverflow.com/a/19255203 to convert thread id to string.
 https://stackoverflow.com/a/46240575 to convert current system time to string.
 https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2 to redirect cout buffer to external file.
 
+24 Dec - Implemented resize filter using nearest neighbor scaling algorithm.
+24 Dec - Implemented rotate filter.
+References:
+https://courses.cs.vt.edu/~masc1044/L17-Rotation/ScalingNN.html
+https://courses.cs.vt.edu/~masc1044/L17-Rotation/rotateScale.html
+
