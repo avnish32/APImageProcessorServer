@@ -51,3 +51,10 @@ References:
 https://courses.cs.vt.edu/~masc1044/L17-Rotation/ScalingNN.html
 https://courses.cs.vt.edu/~masc1044/L17-Rotation/rotateScale.html
 
+25 Dec - Implemented Crop filter.
+25 Dec - Implemented Flip filter.
+25 Dec - Implemented RGB to Grayscale filter using the Luminosity method.
+References:
+https://www.baeldung.com/cs/convert-rgb-to-grayscale
+https://answers.opencv.org/question/26133/using-matat-with-single-channel-image/
+https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#split

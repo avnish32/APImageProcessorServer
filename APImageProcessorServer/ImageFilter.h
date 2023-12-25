@@ -13,5 +13,6 @@ public:
 	ImageFilter();
 	ImageFilter(const Mat& sourceImage);
 	virtual Mat ApplyFilter() = 0;
+	virtual bool CanFilterBeApplied();
 };
 

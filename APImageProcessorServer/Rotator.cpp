@@ -4,7 +4,7 @@
 using std::cout;
 using cv::Vec3b;
 
-Mat Rotator::RotateClockwiseOnce()
+Mat Rotator::_RotateClockwiseOnce()
 {
 	u_short sourceWidth = _sourceImage.cols;
 	u_short sourceHeight = _sourceImage.rows;
@@ -25,7 +25,7 @@ Mat Rotator::RotateClockwiseOnce()
 	return targetImage;
 }
 
-Mat Rotator::RotateAntiClockwiseOnce()
+Mat Rotator::_RotateAntiClockwiseOnce()
 {
 	u_short sourceWidth = _sourceImage.cols;
 	u_short sourceHeight = _sourceImage.rows;
@@ -46,7 +46,7 @@ Mat Rotator::RotateAntiClockwiseOnce()
 	return targetImage;
 }
 
-Mat Rotator::RotateTwice()
+Mat Rotator::_RotateTwice()
 {
 	u_short sourceWidth = _sourceImage.cols;
 	u_short sourceHeight = _sourceImage.rows;
@@ -91,20 +91,20 @@ Mat Rotator::ApplyFilter()
 		switch (_direction)
 		{
 		case CLOCKWISE:
-			return RotateClockwiseOnce();
+			return _RotateClockwiseOnce();
 		default:
-			return RotateAntiClockwiseOnce();
+			return _RotateAntiClockwiseOnce();
 		}
 	case 2:
 		//For 2 turns, direction doesn't matter.
-		return RotateTwice();
+		return _RotateTwice();
 	case 3:
 		switch (_direction)
 		{
 		case CLOCKWISE:
-			return RotateAntiClockwiseOnce();
+			return _RotateAntiClockwiseOnce();
 		default:
-			return RotateClockwiseOnce();
+			return _RotateClockwiseOnce();
 		}
 	default:
 		return _sourceImage;

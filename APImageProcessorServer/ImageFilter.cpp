@@ -9,3 +9,8 @@ ImageFilter::ImageFilter(const Mat& sourceImage)
 {
 	_sourceImage = sourceImage;
 }
+
+bool ImageFilter::CanFilterBeApplied()
+{
+	return true;
+}

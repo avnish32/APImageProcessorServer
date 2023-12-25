@@ -268,6 +268,7 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 
 	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
 
+	//TODO perform payload validations here, including checking whether filter can be applied
 	responseCode = InitializeImageDimensions(imageDimensions, clientQueue);
 
 	if (responseCode == RESPONSE_FAILURE) {

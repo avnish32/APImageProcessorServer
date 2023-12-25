@@ -1,7 +1,7 @@
 #pragma once
 #include<iostream>
 
-using namespace std;
+using std::string;
 
 const short NUM_THREADS = 4;
 
@@ -17,3 +17,6 @@ const string RESPONSE_PAYLOAD_KEY = "RES";
 const u_short MAX_SERVER_RESPONSE_PAYLOAD_SIZE_BYTES = 5000;
 
 const int IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS = 2000;
+
+enum RotationDirection {CLOCKWISE, ANTI_CLOCKWISE};
+enum FlipDirection {HORIZONTAL, VERTICAL};

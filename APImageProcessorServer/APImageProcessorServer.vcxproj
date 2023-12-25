@@ -136,18 +136,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorServer.cpp" />
+    <ClCompile Include="Cropper.cpp" />
+    <ClCompile Include="Flipper.cpp" />
     <ClCompile Include="ImageFilter.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="Resizer.cpp" />
+    <ClCompile Include="RGBToGrayscaleConverter.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Cropper.h" />
+    <ClInclude Include="Flipper.h" />
     <ClInclude Include="ImageFilter.h" />
     <ClInclude Include="ImageProcessor.h" />
     <ClInclude Include="Resizer.h" />
+    <ClInclude Include="RGBToGrayscaleConverter.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UDPServer.h" />

@@ -1,7 +1,6 @@
 #pragma once
 #include "ImageFilter.h"
-
-enum RotationDirection {CLOCKWISE, ANTI_CLOCKWISE};
+#include "Constants.h"
 
 class Rotator : public ImageFilter
 {
@@ -9,9 +8,9 @@ private:
 	RotationDirection _direction;
 	u_short _numOfTurns;
 
-	Mat RotateClockwiseOnce();
-	Mat RotateAntiClockwiseOnce();
-	Mat RotateTwice();
+	Mat _RotateClockwiseOnce();
+	Mat _RotateAntiClockwiseOnce();
+	Mat _RotateTwice();
 
 public:
 	Rotator();
