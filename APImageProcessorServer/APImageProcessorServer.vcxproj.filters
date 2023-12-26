@@ -45,6 +45,9 @@
     <ClCompile Include="RGBToGrayscaleConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BrightnessAdjuster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UDPServer.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RGBToGrayscaleConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BrightnessAdjuster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
