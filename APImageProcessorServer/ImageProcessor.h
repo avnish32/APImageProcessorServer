@@ -20,5 +20,6 @@ public:
 	~ImageProcessor();
 	void DisplayImage(cv::String windowName);
 	void SaveImage(cv::String saveAddress);
+	Mat GetImage();
 };
 

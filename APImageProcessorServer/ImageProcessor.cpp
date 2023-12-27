@@ -72,3 +72,8 @@ void ImageProcessor::SaveImage(cv::String saveAddress)
 	}
 	cout << "\nImage written to file successfully.";
 }
+
+Mat ImageProcessor::GetImage()
+{
+	return _image;
+}

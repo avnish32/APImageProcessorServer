@@ -26,7 +26,7 @@ int main()
 
     //ThreadPool threadPool(NUM_THREADS);
     
-    short responseCode = udpServer.receiveImageSize();
+    short responseCode = udpServer.ReceiveClientMsg();
     /*if (responseCode == RESPONSE_FAILURE) {
         responseCode = udpServer.sendAck(SERVER_NEGATIVE_ACK);
         if (responseCode == RESPONSE_FAILURE) {
