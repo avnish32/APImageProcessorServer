@@ -59,8 +59,8 @@ void ImageProcessor::DisplayImage(cv::String windowName)
 	//namedWindow(windowName, WINDOW_KEEPRATIO);
 	imshow(windowName, _image);
 
-	//waitKey(0);
-	//destroyWindow(windowName);
+	//cv::waitKey(0);
+	//cv::destroyWindow(windowName);
 }
 
 void ImageProcessor::SaveImage(cv::String saveAddress)

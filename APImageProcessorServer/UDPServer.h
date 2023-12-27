@@ -4,6 +4,7 @@
 #include<map>
 
 #include "ThreadPool.h"
+#include "Constants.h"
 
 using namespace cv;
 
@@ -25,11 +26,12 @@ private:
 	short CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
 		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		const sockaddr_in& clientAddress);
-	short InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue);
+	short InitializeImageMetadata(cv::Size& imageDimensions, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
+		std::queue<string>& clientQueue);
 	void processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress);
 	const Mat constructImageFromData(const char* imageData, const cv::Size& imageDimensions);
 	const Mat constructImageFromData(map<u_short, string> imageDataMap, const cv::Size& imageDimensions);
-	short processImageSizePayload(char* receivedData, cv::Size& imageDimensions);
+	short processImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams);
 	vector<u_short> calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 
 public:

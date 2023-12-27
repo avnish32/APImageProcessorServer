@@ -7,6 +7,7 @@
 
 #pragma comment (lib, "ws2_32.lib")
 
+//TODO substitute this
 using namespace std;
 
 UDPServer::UDPServer()
@@ -264,12 +265,14 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 	cout << "\nClient queue size: " << clientQueue.size();
 
 	cv::Size imageDimensions;
+	ImageFilterTypesEnum filterType;
+	vector<float> filterParams;
 	short responseCode;
 
 	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
 
 	//TODO perform payload validations here, including checking whether filter can be applied
-	responseCode = InitializeImageDimensions(imageDimensions, clientQueue);
+	responseCode = InitializeImageMetadata(imageDimensions, filterType, filterParams, clientQueue);
 
 	if (responseCode == RESPONSE_FAILURE) {
 		serverResponseCodeForClient = SERVER_NEGATIVE_ACK;
@@ -372,7 +375,7 @@ void UDPServer::processImageReq(const sockaddr_in& clientAddress)
 	}
 
 	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions);
-	imageProcessor.DisplayImage("Received Image");
+	//imageProcessor.DisplayImage("Received Image");
 	imageProcessor.SaveImage(GetAddressToSaveImage());
 	
 
@@ -414,12 +417,13 @@ short UDPServer::CheckForTimeout(std::chrono::steady_clock::time_point& lastImag
 	return RESPONSE_SUCCESS;
 }
 
-short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue<string>& clientQueue)
+short UDPServer::InitializeImageMetadata(cv::Size& imageDimensions, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
+	std::queue<string>& clientQueue)
 {
 	long lastPayloadSize = 0, bytesRecd = 0;
 	string imageSizeString = "";
 
-	while (bytesRecd < 15) {
+	while (!clientQueue.empty()) {
 
 		cout << "\nInitializeImageDimensions::Before popping from queue.";
 
@@ -454,7 +458,7 @@ short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue
 
 		//string imageSizePayloadInQueue = clientQueue.front();
 		imageSizeString += clientQueue.front();
-		cout << "\nimageSizePayloadInQueue: " << imageSizeString;
+		cout << "\nimageMDPayloadInQueue: " << imageSizeString;
 		//strcpy_s(imageSizeString + bytesRecd, lastPayloadSize, clientQueue.front());
 		//strcpy(imageSizeString + lastPayloadSize, clientQueue->front());
 		clientQueue.pop();
@@ -463,14 +467,17 @@ short UDPServer::InitializeImageDimensions(cv::Size& imageDimensions, std::queue
 		cout << "\nImage size string at iteration end: " << imageSizeString;
 	}
 	cout << "\nQueue size after initializing image dimensions: " << clientQueue.size();
-	return processImageSizePayload(&imageSizeString[0], imageDimensions);
+	return processImageMetadataPayload(&imageSizeString[0], imageDimensions, filterType, filterParams);
 	
 }
 
 void UDPServer::processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress)
 {
 	cv::Size imageDimensions;
-	short responseCode = processImageSizePayload(receivedImageSizeData, imageDimensions);
+	ImageFilterTypesEnum filterType;
+	vector<float> filterParams;
+
+	short responseCode = processImageMetadataPayload(receivedImageSizeData, imageDimensions, filterType, filterParams);
 	short serverResponseCodeForClient = SERVER_POSITIVE_ACK;
 	if (responseCode == RESPONSE_FAILURE) {
 		serverResponseCodeForClient = SERVER_NEGATIVE_ACK;
@@ -489,21 +496,29 @@ void UDPServer::processImageProcessingReq(char* receivedImageSizeData, const soc
 	}
 }
 
-short UDPServer::processImageSizePayload(char* receivedData, cv::Size& imageDimensions)
+short UDPServer::processImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, 
+	ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams)
 {
-	cout << "\nImage size data recd from client: " << receivedData;
-	const vector<std::string> splitImageSizeData = splitString(receivedData, ' ');
+	cout << "\nImage meta data recd from client: " << receivedData;
+	const vector<std::string> splitImageMetadata = splitString(receivedData, ' ');
 
-	//Data validity check
-	if (splitImageSizeData.at(0) != SIZE_PAYLOAD_KEY || splitImageSizeData.size() < 3) {
-		cout << "\nClient sent image size data in wrong format.";
+	//TODO server-side Data validation
+	if (splitImageMetadata.at(0) != SIZE_PAYLOAD_KEY || splitImageMetadata.size() < 3) {
+		cout << "\nClient sent image meta data in wrong format.";
 		return RESPONSE_FAILURE;
 	}
 	try {
-		imageDimensions = cv::Size(stoi(splitImageSizeData.at(1)), stoi(splitImageSizeData.at(2)));
+		imageDimensions = cv::Size(stoi(splitImageMetadata.at(1)), stoi(splitImageMetadata.at(2)));
+		filterTypeEnum = (ImageFilterTypesEnum)(stoi(splitImageMetadata.at(3)));
+
+		if (splitImageMetadata.size() > 4) {
+			for (int i = 4; i < splitImageMetadata.size(); i++) {
+				filterParams.push_back(stof(splitImageMetadata.at(i)));
+			}
+		}
 	}
 	catch (invalid_argument iaExp) {
-		cout << "\nInvalid image size values received.";
+		cout << "\nInvalid image size/filter values received.";
 		return RESPONSE_FAILURE;
 	}
 
@@ -619,7 +634,7 @@ short UDPServer::receiveImage(const cv::Size& imageDimensions, const sockaddr_in
 	const Mat constructedImage = constructImageFromData(dummyMap, imageDimensions);
 
 	ImageProcessor imageProcessor(constructedImage);
-	imageProcessor.DisplayImage("Received image");
+	//imageProcessor.DisplayImage("Received image");
 	imageProcessor.SaveImage(GetAddressToSaveImage());
 
 	return RESPONSE_SUCCESS;

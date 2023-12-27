@@ -62,3 +62,8 @@ https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#split
 26 Dec - Implemented brightness adjustment filter.
 References:
 https://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/image-processing-algorithms-part-4-brightness-adjustment/	
+
+27 Dec - Added support for command line arguments.
+27 Dec - Added client-side validations for filter parameters submitted by the user.
+27 Dec - Added image metadata to payload.
+No references.
