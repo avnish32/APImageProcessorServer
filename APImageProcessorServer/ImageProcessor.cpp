@@ -63,6 +63,16 @@ void ImageProcessor::DisplayImage(cv::String windowName)
 	//cv::destroyWindow(windowName);
 }
 
+void ImageProcessor::SaveImage()
+{
+	bool wasImageWritten = imwrite(_GetAddressToSaveImage(), _image);
+	if (!wasImageWritten) {
+		cout << "\nImage could not be written to file.";
+		return;
+	}
+	cout << "\nImage written to file successfully.";
+}
+
 void ImageProcessor::SaveImage(cv::String saveAddress)
 {
 	bool wasImageWritten = imwrite(saveAddress, _image);
@@ -76,4 +86,21 @@ void ImageProcessor::SaveImage(cv::String saveAddress)
 Mat ImageProcessor::GetImage()
 {
 	return _image;
+}
+
+cv::String ImageProcessor::_GetAddressToSaveImage() {
+
+	//Below snippet to convert thread id to string taken from https://stackoverflow.com/a/19255203
+	auto threadId = std::this_thread::get_id();
+	std::stringstream sStream;
+	sStream << threadId;
+
+	//Below snippet to convert chrono::time_point to string taken from https://stackoverflow.com/a/46240575
+	//using namespace std::chrono_literals;
+	std::chrono::time_point tp = std::chrono::system_clock::now();
+	std::string timestamp = std::format("{:%H%M%S}", tp);
+
+	//string timestamp = std::format("{:%H%M%s}", nowTime);
+	cv::String imageSaveAddress = "./Resources/savedImage_" + sStream.str() + "_" + timestamp + ".jpg";
+	return imageSaveAddress;
 }

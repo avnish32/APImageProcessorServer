@@ -66,4 +66,5 @@ https://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/im
 27 Dec - Added support for command line arguments.
 27 Dec - Added client-side validations for filter parameters submitted by the user.
 27 Dec - Added image metadata to payload.
+27 Dec - Added functionality for server to send image back to client reliably.
 No references.

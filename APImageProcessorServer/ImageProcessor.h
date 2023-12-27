@@ -13,12 +13,15 @@ class ImageProcessor
 private:
 	Mat _image;
 
+	cv::String _GetAddressToSaveImage();
+
 public:
 	ImageProcessor();
 	ImageProcessor(Mat image);
 	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
 	~ImageProcessor();
 	void DisplayImage(cv::String windowName);
+	void SaveImage();
 	void SaveImage(cv::String saveAddress);
 	Mat GetImage();
 };

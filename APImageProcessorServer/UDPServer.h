@@ -26,6 +26,9 @@ private:
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	short validateClientResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode);
 	void processImageReq(const sockaddr_in& clientAddress);
+	short ConsumeImageDataFromClientQueue(std::queue<std::string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
+		const u_short& expectedNumberOfPayloads, const sockaddr_in& clientAddress, long& imageBytesLeftToReceive);
+	short ValidateImageDataPayload(std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 	short CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
 		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		const sockaddr_in& clientAddress);
@@ -41,14 +44,17 @@ private:
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
 	short sendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend, const sockaddr_in& serverAddress);
+	void _RemoveClientDataFromMap(const string& clientAddressKey);
 
 public:
 	UDPServer();
 	~UDPServer();
-	short sendServerResponse(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
+	short SendServerResponseToClient(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
+	short SendImageMetadataToClient(const Mat& image, const sockaddr_in& clientAddress);
 	short ReceiveClientMsg();
 	short receiveImage(const cv::Size& imageDimensions, const sockaddr_in& clientAddress); //TODO use abstract class here: Server -> UDPServer -> ImageReceivingServer
 	short SendImage(const cv::Mat& imageToSend, const sockaddr_in& clientAddress, queue<std::string>& clientQueue);
+	short ConsumeAndValidateClientMsgFromQueue(std::queue<std::string>& clientQueue, std::vector<cv::String>& clientResponseSplit, short& clientResponseCode);
 	bool isValid();
 };
 
