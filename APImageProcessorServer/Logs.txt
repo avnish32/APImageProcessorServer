@@ -68,3 +68,9 @@ https://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/im
 27 Dec - Added image metadata to payload.
 27 Dec - Added functionality for server to send image back to client reliably.
 No references.
+
+28 Dec - Added queue at client end to receive server msgs. This sped up processing at client side.
+Without queue, client needed 35 iterations to receive image data from server, and the time difference b/w server receiving image and sending back to client was ~60 secs.
+With queue, client needed only 6 iterations, and the time difference was reduced to ~10 secs. These figures remained the same for processing of 2 images in parallel.
+References:
+For thread-safe functions to access shared loop variables: https://stackoverflow.com/a/5927246

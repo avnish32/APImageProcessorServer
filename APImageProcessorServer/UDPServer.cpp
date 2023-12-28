@@ -25,7 +25,7 @@ UDPServer::UDPServer()
 		else {
 			cout << "\nSocket created successfully.";
 			u_long NON_BLOCKING_MODE_TRUE = 0;
-			if (ioctlsocket(_socket, FIONBIO, &NON_BLOCKING_MODE_TRUE) == -1) {
+			if (ioctlsocket(_socket, FIONBIO, &NON_BLOCKING_MODE_TRUE) == SOCKET_ERROR) {
 				cout << "\nCould not set server socket to non-blocking mode.";
 				_socket = INVALID_SOCKET;
 			}
@@ -34,7 +34,7 @@ UDPServer::UDPServer()
 			serverAddress.sin_addr.s_addr = ADDR_ANY;
 			serverAddress.sin_port = 8080;
 			
-			if (bind(_socket, (const sockaddr*)&serverAddress, (int) sizeof(serverAddress)) == -1) {
+			if (bind(_socket, (const sockaddr*)&serverAddress, (int) sizeof(serverAddress)) == SOCKET_ERROR) {
 				cout << "\nError while binding server socket. Error code: " << WSAGetLastError();
 				_socket = INVALID_SOCKET;
 			}
@@ -432,6 +432,8 @@ short UDPServer::CheckForTimeout(std::chrono::steady_clock::time_point& lastImag
 	}
 	
 	vector<u_short> missingSeqNumbers = calculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
+	//TODO keep a reference of missingSeqNumbers in prev call as a function param, compare it with this new vector.
+	//If both are same, then client is not active anymore. Return failure response.
 	if (missingSeqNumbers.size() > 0) {
 		responseCode = SendServerResponseToClient(SERVER_NEGATIVE_ACK, clientAddress, &missingSeqNumbers);
 	}
@@ -604,6 +606,7 @@ short UDPServer::SendServerResponseToClient(short serverResponseCode, const sock
 	_mtx.unlock();
 	cout << "\nAfter unlocking socket in sendAck.";
 
+	//TODO below check not working, bytes are sent even if client is not receiving
 	if (bytesSent <= 0) {
 		cout << "\nError while sending acknowldgement to client. Error code: " << WSAGetLastError();
 		return RESPONSE_FAILURE;
