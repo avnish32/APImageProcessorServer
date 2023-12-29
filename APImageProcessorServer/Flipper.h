@@ -8,13 +8,13 @@ class Flipper : public ImageFilter
 private:
 	FlipDirection _flipDirection;
 
-	Mat _FlipHorizontally();
-	Mat _FlipVertically();
+	Mat _FlipHorizontally(const Mat& sourceImage);
+	Mat _FlipVertically(const Mat& sourceImage);
 
 public:
 	Flipper();
-	Flipper(const Mat& sourceImage, const FlipDirection& flipDirection);
+	Flipper(const FlipDirection& flipDirection);
 	~Flipper();
-	Mat ApplyFilter() override;
+	Mat ApplyFilter(const Mat& sourceImage) override;
 };
 

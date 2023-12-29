@@ -9,8 +9,8 @@ private:
 	float _clampPixelValue(float unClampedValue, const float minValue, const float maxValue);
 public:
 	BrightnessAdjuster();
-	BrightnessAdjuster(const Mat& sourceImage, const float& brightnessAdjFactor);
+	BrightnessAdjuster(const float& brightnessAdjFactor);
 	~BrightnessAdjuster();
-	Mat ApplyFilter();
+	Mat ApplyFilter(const Mat& sourceImage);
 };
 

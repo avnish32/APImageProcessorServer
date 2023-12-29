@@ -5,29 +5,18 @@ using std::cout;
 
 using cv::split;
 
-RGBToGrayscaleConverter::RGBToGrayscaleConverter()
+Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& sourceImage)
 {
-}
+	cout << "\nConverting from RGB to Grayscale.";
 
-RGBToGrayscaleConverter::RGBToGrayscaleConverter(Mat sourceImage):ImageFilter(sourceImage)
-{
-}
-
-RGBToGrayscaleConverter::~RGBToGrayscaleConverter()
-{
-	cout << "\nRGBToGrayscaleConverter object destroyed.";
-}
-
-Mat RGBToGrayscaleConverter::ApplyFilter()
-{
 	//Initialize target image. Since this is a grayscale image, target need have only one channel
-	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), CV_8UC1);
+	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), CV_8UC1);
 
 	Mat sourceChannelsSplit[3];
-	split(_sourceImage, sourceChannelsSplit);
+	split(sourceImage, sourceChannelsSplit);
 	
-	for (int i = 0; i < _sourceImage.rows; i++) {
-		for (int j = 0; j < _sourceImage.cols; j++) {
+	for (int i = 0; i < sourceImage.rows; i++) {
+		for (int j = 0; j < sourceImage.cols; j++) {
 			//Using Luminosity method to convert from RGB to Grayscale.
 			// Below formula taken from https://www.baeldung.com/cs/convert-rgb-to-grayscale
 			//grayscale = 0.3 * R + 0.59 * G + 0.11 * B}

@@ -7,12 +7,6 @@ using cv::Mat;
 #pragma once
 class ImageFilter
 {
-protected:
-	Mat _sourceImage;
 public:
-	ImageFilter();
-	ImageFilter(const Mat& sourceImage);
-	virtual Mat ApplyFilter() = 0;
-	virtual bool CanFilterBeApplied();
+	virtual Mat ApplyFilter(const Mat& sourceImage) = 0;
 };
-

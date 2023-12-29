@@ -3,28 +3,28 @@
 using cv::Vec3b;
 using std::cout;
 
-Mat Flipper::_FlipHorizontally()
+Mat Flipper::_FlipHorizontally(const Mat& sourceImage)
 {
 	//Initialize target image
-	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), _sourceImage.type());
+	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
 
-	for (int i = 0; i < _sourceImage.rows; i++) {
-		for (int j = 0; j < _sourceImage.cols; j++) {
-			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(i, _sourceImage.cols - j - 1);
+	for (int i = 0; i < sourceImage.rows; i++) {
+		for (int j = 0; j < sourceImage.cols; j++) {
+			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(i, sourceImage.cols - j - 1);
 		}
 	}
 
 	return targetImage;
 }
 
-Mat Flipper::_FlipVertically()
+Mat Flipper::_FlipVertically(const Mat& sourceImage)
 {
 	//Initialize target image
-	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), _sourceImage.type());
+	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
 
-	for (int i = 0; i < _sourceImage.rows; i++) {
-		for (int j = 0; j < _sourceImage.cols; j++) {
-			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(_sourceImage.rows - i - 1, j);
+	for (int i = 0; i < sourceImage.rows; i++) {
+		for (int j = 0; j < sourceImage.cols; j++) {
+			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(sourceImage.rows - i - 1, j);
 		}
 	}
 
@@ -36,7 +36,7 @@ Flipper::Flipper()
 	_flipDirection = HORIZONTAL;
 }
 
-Flipper::Flipper(const Mat& sourceImage, const FlipDirection& flipDirection):ImageFilter(sourceImage)
+Flipper::Flipper(const FlipDirection& flipDirection)
 {
 	_flipDirection = flipDirection;
 }
@@ -46,12 +46,14 @@ Flipper::~Flipper()
 	cout << "\nDestroying Flipper object.";
 }
 
-Mat Flipper::ApplyFilter()
+Mat Flipper::ApplyFilter(const Mat& sourceImage)
 {
+	cout << "\nApplying flip filter. Flip direction: "<<_flipDirection;
+
 	switch (_flipDirection) {
 	case VERTICAL:
-		return _FlipVertically();
+		return _FlipVertically(sourceImage);
 	default:
-		return _FlipHorizontally();
+		return _FlipHorizontally(sourceImage);
 	}
 }

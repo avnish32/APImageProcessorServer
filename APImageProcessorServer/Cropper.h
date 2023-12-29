@@ -11,10 +11,9 @@ private:
 
 public:
 	Cropper();
-	Cropper(const Mat& sourceImage, const u_short& cropTopLeftCornerX, const u_short& cropTopLeftCornerY,
+	Cropper(const u_short& cropTopLeftCornerX, const u_short& cropTopLeftCornerY,
 		const u_short& targetWidth, const u_short& targetHeight);
 	~Cropper();
-	bool CanFilterBeApplied();
-	Mat ApplyFilter() override;
+	Mat ApplyFilter(const Mat& sourceImage) override;
 };
 

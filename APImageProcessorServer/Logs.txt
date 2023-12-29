@@ -74,3 +74,16 @@ Without queue, client needed 35 iterations to receive image data from server, an
 With queue, client needed only 6 iterations, and the time difference was reduced to ~10 secs. These figures remained the same for processing of 2 images in parallel.
 References:
 For thread-safe functions to access shared loop variables: https://stackoverflow.com/a/5927246
+
+29 Dec - Added factory classes for Filters and FilterValidators at both server and client.
+29 Dec - Implemented server side validations for image metadata.
+29 Dec - Added capability to apply requested filter at server.
+Filter request format:
+1. Resize <Target Width> <Target Height> e.g. Resize 800 600
+2. Rotate <Direction: 0 - Clockwise, 1 - Anti-clockwise> <Number of turns> e.g. Rotate 0 3
+3. Crop <X-coordinate of top left corner of desired image> <Y-coordinate of top left corner of desired image> <Target width> <Target height> e.g. Crop 750 50 300 1000
+4. Flip <Direction: 0 - Horizontal, 1 - Vertical> e.g. Flip 1
+5. Grayscale
+6. Brightness <Brigthness Adjustment Factor: 0 to n, where 0 will return a completely dark picture, 1 will return the same picture and 2 will double the brightness> e.g. Brightness 2.5
+29 Dec - Added image file size in metadata payload. This communicates actual number of bytes to expect, as often the image size is not exactly equal to width*height*number of channels, such as in Grayscale conversion or Brightness adjustment. In such cases, image dimensions stay the same but image size differs.
+29 Dec - Added functionality to construct image from payload map depending on the number of channels. This enables image construction for Grayscale filter.

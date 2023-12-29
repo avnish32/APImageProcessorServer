@@ -4,18 +4,19 @@
 
 class Rotator : public ImageFilter
 {
+	//Params reqd in payload: Rotation direction, number of turns
 private:
 	RotationDirection _direction;
 	u_short _numOfTurns;
 
-	Mat _RotateClockwiseOnce();
-	Mat _RotateAntiClockwiseOnce();
-	Mat _RotateTwice();
+	Mat _RotateClockwiseOnce(const Mat& sourceImage);
+	Mat _RotateAntiClockwiseOnce(const Mat& sourceImage);
+	Mat _RotateTwice(const Mat& sourceImage);
 
 public:
 	Rotator();
-	Rotator(const Mat& sourceImage, const u_short& numOfTurns, const RotationDirection& rotationMode);
+	Rotator(const RotationDirection& rotationMode, const u_short& numOfTurns);
 	~Rotator();
-	Mat ApplyFilter() override;
+	Mat ApplyFilter(const Mat& sourceImage) override;
 };
 

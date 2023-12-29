@@ -25,20 +25,21 @@ private:
 	const vector<std::string> SplitString(char* inputString, char delimiter);
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	short validateClientResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode);
-	void processImageReq(const sockaddr_in& clientAddress);
+	void ProcessImageReq(const sockaddr_in& clientAddress);
 	short ConsumeImageDataFromClientQueue(std::queue<std::string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
 		const u_short& expectedNumberOfPayloads, const sockaddr_in& clientAddress, long& imageBytesLeftToReceive);
 	short ValidateImageDataPayload(std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 	short CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
 		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		const sockaddr_in& clientAddress);
-	short InitializeImageMetadata(cv::Size& imageDimensions, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
+	short InitializeImageMetadata(cv::Size& imageDimensions, uint& imageFileSize, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
 		std::queue<string>& clientQueue);
 	long DrainQueue(std::queue<std::string>& clientQueue, std::string& imageSizeString);
 	void processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress);
 	const Mat constructImageFromData(const char* imageData, const cv::Size& imageDimensions);
 	const Mat constructImageFromData(map<u_short, string> imageDataMap, const cv::Size& imageDimensions);
-	short processImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams);
+	short ProcessImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, uint& imageFileSize, 
+		ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams);
 	vector<u_short> calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 	void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);

@@ -136,26 +136,43 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorServer.cpp" />
+    <ClCompile Include="BrightnessAdjFilterParamsValidator.cpp" />
     <ClCompile Include="BrightnessAdjuster.cpp" />
+    <ClCompile Include="CropFilterParamsValidator.cpp" />
     <ClCompile Include="Cropper.cpp" />
+    <ClCompile Include="FilterParamsValidator.cpp" />
+    <ClCompile Include="FilterParamsValidatorFactory.cpp" />
+    <ClCompile Include="FlipFilterParamsValidator.cpp" />
     <ClCompile Include="Flipper.cpp" />
-    <ClCompile Include="ImageFilter.cpp" />
+    <ClCompile Include="ImageFilterFactory.cpp" />
+    <ClCompile Include="ImageMetadataProcessor.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
+    <ClCompile Include="ResizeFilterParamsValidator.cpp" />
     <ClCompile Include="Resizer.cpp" />
     <ClCompile Include="RGBToGrayscaleConverter.cpp" />
+    <ClCompile Include="RotateFilterParamsValidator.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BrightnessAdjFilterParamsValidator.h" />
     <ClInclude Include="BrightnessAdjuster.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="CropFilterParamsValidator.h" />
     <ClInclude Include="Cropper.h" />
+    <ClInclude Include="FilterParamsValidator.h" />
+    <ClInclude Include="FilterParamsValidatorFactory.h" />
+    <ClInclude Include="FlipFilterParamsValidator.h" />
     <ClInclude Include="Flipper.h" />
     <ClInclude Include="ImageFilter.h" />
+    <ClInclude Include="ImageFilterFactory.h" />
+    <ClInclude Include="ImageMetadataProcessor.h" />
     <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="ResizeFilterParamsValidator.h" />
     <ClInclude Include="Resizer.h" />
     <ClInclude Include="RGBToGrayscaleConverter.h" />
+    <ClInclude Include="RotateFilterParamsValidator.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UDPServer.h" />
