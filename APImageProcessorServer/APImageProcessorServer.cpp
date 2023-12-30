@@ -4,27 +4,24 @@
 #include "UDPServer.h"
 #include "ThreadPool.h"
 #include "Constants.h"
+#include "MsgLogger.h"
 
 #include<fstream>
 
+MsgLogger* MsgLogger::_loggerInstance = nullptr;
 
 int main()
 {
-    //Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
-    //Performs 9 times faster when output is written to file.
-    //std::ofstream out("outLogs.txt");
-    //std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
-    //std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+    MsgLogger* msgLogger = MsgLogger::GetInstance();
 
-    std::cout << "Hello World!\n";
+    cout << "Server application started.";
 
     UDPServer udpServer;
     if (!udpServer.isValid()) {
-        cout << "\nError in socket creation. Application will exit now.";
+        //cout << "\nError in socket creation. Application will exit now.";
+        msgLogger->LogError("Error in socket creation. Application will exit now.");
         return RESPONSE_FAILURE;
     }
-
-    //ThreadPool threadPool(NUM_THREADS);
     
     short responseCode = udpServer.ReceiveClientMsg();
     /*if (responseCode == RESPONSE_FAILURE) {
@@ -37,6 +34,4 @@ int main()
     /*if (serverResponseCode == SERVER_POSITIVE_ACK) {
         udpServer.receiveImage();
     }*/
-    
-    //std::cout.rdbuf(coutbuf); //reset to standard output again
 }

@@ -147,6 +147,7 @@
     <ClCompile Include="ImageFilterFactory.cpp" />
     <ClCompile Include="ImageMetadataProcessor.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
+    <ClCompile Include="MsgLogger.cpp" />
     <ClCompile Include="ResizeFilterParamsValidator.cpp" />
     <ClCompile Include="Resizer.cpp" />
     <ClCompile Include="RGBToGrayscaleConverter.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="ImageFilterFactory.h" />
     <ClInclude Include="ImageMetadataProcessor.h" />
     <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="MsgLogger.h" />
     <ClInclude Include="ResizeFilterParamsValidator.h" />
     <ClInclude Include="Resizer.h" />
     <ClInclude Include="RGBToGrayscaleConverter.h" />

@@ -3,6 +3,7 @@
 #include<vector>
 
 #include "Constants.h"
+#include "MsgLogger.h"
 
 #pragma once
 
@@ -16,6 +17,7 @@ class ImageProcessor
 {
 private:
 	Mat _image;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	cv::String _GetAddressToSaveImage();
 	void _ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);

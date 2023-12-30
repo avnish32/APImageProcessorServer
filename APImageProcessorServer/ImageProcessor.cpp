@@ -3,6 +3,7 @@
 #include "ImageFilterFactory.h"
 
 #include<iostream>
+#include<string>
 
 using cv::imwrite;
 using cv::imshow;
@@ -11,10 +12,12 @@ using cv::Vec3b;
 using cv::Vec4b;
 
 using std::cout;
+using std::to_string;
 
 void ImageProcessor::_ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	cout << "\nConstructing one channel image. Image data map size: " << imageDataMap.size();
+	//cout << "\nConstructing one channel image. Image data map size: " << imageDataMap.size();
+	_msgLogger->LogDebug("Constructing one channel image. Image data map size: " + to_string((ushort)imageDataMap.size()));
 
 	_image = Mat(imageDimensions, CV_8UC1);
 	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
@@ -38,12 +41,14 @@ void ImageProcessor::_ConstructOneChannelImage(map<unsigned short, std::string> 
 		}
 	}
 
-	cout << "\nImage re-shaped.";
+	//cout << "\nImage re-shaped.";
+	_msgLogger->LogDebug("Image re-shaped.");
 }
 
 void ImageProcessor::_ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	cout << "\nConstructing two channel image. Image data map size: " << imageDataMap.size();
+	//cout << "\nConstructing two channel image. Image data map size: " << imageDataMap.size();
+	_msgLogger->LogDebug("Constructing two channel image. Image data map size: " + to_string((ushort)imageDataMap.size()));
 
 	_image = Mat(imageDimensions, CV_8UC2);
 	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
@@ -68,12 +73,14 @@ void ImageProcessor::_ConstructTwoChannelImage(map<unsigned short, std::string> 
 		}
 	}
 
-	cout << "\nImage re-shaped.";
+	//cout << "\nImage re-shaped.";
+	_msgLogger->LogDebug("Image re-shaped.");
 }
 
 void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	cout << "\nConstructing three channel image. Image data map size: " << imageDataMap.size();
+	//cout << "\nConstructing three channel image. Image data map size: " << imageDataMap.size();
+	_msgLogger->LogDebug("Constructing three channel image. Image data map size: " + to_string((ushort)imageDataMap.size()));
 
 	_image = Mat(imageDimensions, CV_8UC3);
 	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
@@ -99,12 +106,14 @@ void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string
 		}
 	}
 
-	cout << "\nImage re-shaped.";
+	//cout << "\nImage re-shaped.";
+	_msgLogger->LogDebug("Image re-shaped.");
 }
 
 void ImageProcessor::_ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	cout << "\nConstructing four channel image. Image data map size: " << imageDataMap.size();
+	//cout << "\nConstructing four channel image. Image data map size: " << imageDataMap.size();
+	_msgLogger->LogDebug("Constructing four channel image. Image data map size: " + to_string((ushort)imageDataMap.size()));
 
 	_image = Mat(imageDimensions, CV_8UC4);
 	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
@@ -131,12 +140,14 @@ void ImageProcessor::_ConstructFourChannelImage(map<unsigned short, std::string>
 		}
 	}
 
-	cout << "\nImage re-shaped.";
+	//cout << "\nImage re-shaped.";
+	_msgLogger->LogDebug("Image re-shaped.");
 }
 
 ImageProcessor::ImageProcessor()
 {
-	cout << "\nImage processor default constructor.";
+	//cout << "\nImage processor default constructor.";
+	_msgLogger->LogDebug("Image processor default constructor.");
 	_image = Mat(1, 1, CV_8UC1);
 }
 
@@ -148,7 +159,9 @@ ImageProcessor::ImageProcessor(Mat image)
 ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize)
 {
 	short numOfChannels = imageFileSize / (imageDimensions.width * imageDimensions.height);
-	cout << "\nInside ImageProcessor. Number of channels: " << numOfChannels;
+	
+	//cout << "\nInside ImageProcessor. Number of channels: " << numOfChannels;
+	_msgLogger->LogDebug("Inside ImageProcessor. Number of channels: " + to_string(numOfChannels));
 
 	switch (numOfChannels) {
 	case 1:
@@ -167,51 +180,21 @@ ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, co
 		_ConstructThreeChannelImage(imageDataMap, imageDimensions);
 		break;
 	}
-	
-	//TODO below is done assuming the client always sends a 3-channel image.
-	//Can calculate number of channels by dividing imageFileSize (recd in image metadata payload) by width*height
-	//and then modifying the loop accordingly.
-
-	//_image = Mat(imageDimensions, CV_8UC3);
-	//cout << "\nConstructing image. Image data map size: " << imageDataMap.size();
-	//unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
-	//int currentImageFragmentByte = 0;
-	//const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
-
-	//for (int i = 0; i < imageDimensions.height; i++) {
-	//	for (int j = 0; j < imageDimensions.width; j++) {
-	//		//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
-	//		if (currentImageFragmentByte >= 60000) {
-
-	//			//cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
-
-	//			currentImageFragment++;
-	//			currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
-	//			currentImageFragmentByte = 0;
-	//		}
-
-	//		_image.at<Vec3b>(i, j) = Vec3b(*(currentImageFragmentData + currentImageFragmentByte),
-	//			*(currentImageFragmentData + currentImageFragmentByte + 1),
-	//			*(currentImageFragmentData + currentImageFragmentByte + 2));
-	//		currentImageFragmentByte += 3;
-	//	}
-	//}
-
-	//cout << "\nImage re-shaped.";
 }
 
 ImageProcessor::~ImageProcessor()
 {
-	cout << "\nImage processor destructor.";
+	//cout << "\nImage processor destructor.";
+	_msgLogger->LogDebug("Image processor destructor.");
 }
 
 void ImageProcessor::DisplayImage(cv::String windowName)
 {
-	//namedWindow(windowName, WINDOW_KEEPRATIO);
+	cv::namedWindow(windowName, cv::WINDOW_KEEPRATIO);
 	imshow(windowName, _image);
 
-	//cv::waitKey(0);
-	//cv::destroyWindow(windowName);
+	cv::waitKey(0);
+	cv::destroyWindow(windowName);
 }
 
 Mat ImageProcessor::ApplyFilter(ImageFilterTypesEnum filterType, vector<float> filterParams)
@@ -224,40 +207,46 @@ void ImageProcessor::SaveImage()
 {
 	bool wasImageWritten = imwrite(_GetAddressToSaveImage(), _image);
 	if (!wasImageWritten) {
-		cout << "\nImage could not be written to file.";
+		//cout << "\nImage could not be written to file.";
+		_msgLogger->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	cout << "\nImage written to file successfully.";
+	//cout << "\nImage written to file successfully.";
+	_msgLogger->LogDebug("Image written to file successfully.");
 }
 
 void ImageProcessor::SaveImage(cv::String saveAddress)
 {
 	bool wasImageWritten = imwrite(saveAddress, _image);
 	if (!wasImageWritten) {
-		cout << "\nImage could not be written to file.";
+		_msgLogger->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	cout << "\nImage written to file successfully.";
+	//cout << "\nImage written to file successfully.";
+	_msgLogger->LogDebug("Image written to file successfully.");
 }
 
 void ImageProcessor::SaveImage(Mat imageToSave)
 {
 	bool wasImageWritten = imwrite(_GetAddressToSaveImage(), imageToSave);
 	if (!wasImageWritten) {
-		cout << "\nImage could not be written to file.";
+		_msgLogger->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	cout << "\nImage written to file successfully.";
+	//cout << "\nImage written to file successfully.";
+	_msgLogger->LogDebug("Image written to file successfully.");
 }
 
 void ImageProcessor::SaveImage(Mat imageToSave, cv::String saveAddress)
 {
 	bool wasImageWritten = imwrite(saveAddress, imageToSave);
 	if (!wasImageWritten) {
-		cout << "\nImage could not be written to file.";
+		//cout << "\nImage could not be written to file.";
+		_msgLogger->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	cout << "\nImage written to file successfully.";
+	//cout << "\nImage written to file successfully.";
+	_msgLogger->LogDebug("Image written to file successfully.");
 }
 
 Mat ImageProcessor::GetImage()

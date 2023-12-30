@@ -7,7 +7,8 @@ using cv::split;
 
 Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& sourceImage)
 {
-	cout << "\nConverting from RGB to Grayscale.";
+	//cout << "\nConverting from RGB to Grayscale.";
+	_msgLogger->LogError("Converting from RGB to Grayscale.");
 
 	//Initialize target image. Since this is a grayscale image, target need have only one channel
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), CV_8UC1);

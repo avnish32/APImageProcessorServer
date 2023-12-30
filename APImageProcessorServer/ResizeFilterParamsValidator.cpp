@@ -12,16 +12,17 @@ ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<float>& fi
 
 bool ResizeFilterParamsValidator::ValidateFilterParams()
 {
-	cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Filter params size: " << _filterParams.size();
+	//cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Filter params size: " << _filterParams.size();
 
 	int targetWidth = _filterParams.at(0);
 	int targetHeight = _filterParams.at(1);
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		cout << "\nERROR: Width and height of resized image cannot be zero or negative.";
+		//cout << "\nERROR: Width and height of resized image cannot be zero or negative.";
+		_msgLogger->LogError("ERROR: Width and height of resized image cannot be zero or negative.");
 		return false;
 	}
 
-	cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Validation successful.";
+	//cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Validation successful.";
 	return true;
 }

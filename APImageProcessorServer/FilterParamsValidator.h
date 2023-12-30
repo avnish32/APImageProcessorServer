@@ -1,6 +1,8 @@
 #include<vector>
 #include<opencv2/opencv.hpp>
 
+#include "MsgLogger.h"
+
 #pragma once
 
 using std::vector;
@@ -11,6 +13,7 @@ class FilterParamsValidator
 protected:
 	vector<float> _filterParams;
 	Size _imageDimensions;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 public:
 	FilterParamsValidator();

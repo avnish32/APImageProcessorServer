@@ -13,7 +13,8 @@ bool BrightnessAdjFilterParamsValidator::ValidateFilterParams()
 {
 	float brightnessAdjFactor = _filterParams.at(0);
 	if (brightnessAdjFactor < 0) {
-		cout << "\nERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.";
+		//cout << "\nERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.";
+		_msgLogger->LogError("ERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.");
 		return false;
 	}
 	return true;

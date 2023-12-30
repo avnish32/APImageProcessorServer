@@ -24,12 +24,14 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 {
 	//Sample payload: SIZE 1024 768 2359296 1 800 600
 	if (_imageMetadataVector.size() < MIN_IMAGE_METADATA_PARAMS) {
-		cout << "\nERROR: Too few parameters in image metadata.";
+		//cout << "\nERROR: Too few parameters in image metadata.";
+		_msgLogger->LogError("ERROR: Too few parameters in image metadata.");
 		return RESPONSE_FAILURE;
 	}
 
 	if (_imageMetadataVector.at(0) != SIZE_PAYLOAD_KEY) {
-		cout << "\nClient sent image meta data in wrong format.";
+		//cout << "\nClient sent image meta data in wrong format.";
+		_msgLogger->LogError("ERROR: Client sent image meta data in wrong format.");
 		return RESPONSE_FAILURE;
 	}
 	try {
@@ -45,7 +47,8 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 		}
 	}
 	catch (std::invalid_argument iaExp) {
-		cout << "\nInvalid image size/filter values received.";
+		//cout << "\nInvalid image size/filter values received.";
+		_msgLogger->LogError("ERROR: Invalid image size/filter values received.");
 		return RESPONSE_FAILURE;
 	}
 
@@ -53,7 +56,8 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 		filterParams, imageDimensions);
 
 	if (filterParamsValidator == nullptr || !filterParamsValidator->ValidateFilterParams()) {
-		cout << "\nFilter parameter validation failed.";
+		//cout << "\nFilter parameter validation failed.";
+		_msgLogger->LogError("ERROR: Filter parameter validation failed.");
 		delete filterParamsValidator;
 		return RESPONSE_FAILURE;
 	}

@@ -17,12 +17,14 @@ bool RotateFilterParamsValidator::ValidateFilterParams()
 
 	//TODO use enum for this
 	if (direction != 0 && direction != 1) {
-		cout << "\nERROR: Invalid direction given for rotation.";
+		//cout << "\nERROR: Invalid direction given for rotation.";
+		_msgLogger->LogError("ERROR: Invalid direction given for rotation.");
 		return false;
 	}
 
 	if (numOfTurns < 0) {
-		cout << "\nERROR: Invalid number of turns given for rotation.";
+		//cout << "\nERROR: Invalid number of turns given for rotation.";
+		_msgLogger->LogError("ERROR: Invalid number of turns given for rotation.");
 		return false;
 	}
 

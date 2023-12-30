@@ -3,6 +3,7 @@
 #include<string>
 
 #include "Constants.h"
+#include "MsgLogger.h"
 
 using std::vector;
 using std::string;
@@ -13,6 +14,7 @@ class ImageMetadataProcessor
 {
 private:
 	vector<string> _imageMetadataVector;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 public:
 	ImageMetadataProcessor(vector<string>);

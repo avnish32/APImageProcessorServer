@@ -3,6 +3,7 @@
 
 #include "ImageFilter.h"
 #include "Constants.h"
+#include "MsgLogger.h"
 
 #pragma once
 

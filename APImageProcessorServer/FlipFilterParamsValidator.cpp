@@ -16,7 +16,8 @@ bool FlipFilterParamsValidator::ValidateFilterParams()
 
 	//TODO use enum for this
 	if (direction != 0 && direction != 1) {
-		cout << "\nERROR: Invalid direction given for flipping.";
+		//cout << "\nERROR: Invalid direction given for flipping.";
+		_msgLogger->LogError("ERROR: Invalid direction given for flipping.");
 		return false;
 	}
 	return true;

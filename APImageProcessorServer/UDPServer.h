@@ -5,7 +5,9 @@
 
 #include "ThreadPool.h"
 #include "Constants.h"
+#include "MsgLogger.h"
 
+//TODO subtitute this
 using namespace cv;
 
 #pragma once
@@ -15,20 +17,15 @@ private:
 	SOCKET _socket;
 	mutex _mtx;
 	map<std::string, queue<std::string>> _clientToQueueMap;
-
-	//TODO map to store image size for each client - we might have to spawn new thread for each client, so each thread
-	//can have its own copy of the imageDimensions sent by the client.
-	//Also since server does not know the client details before it receives data in UDP, there's no way
-	//to check the map if it contains data for the connecting client before actually receiving the image from client,
-	//which is a deadlock.
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();	
 
 	const vector<std::string> SplitString(char* inputString, char delimiter);
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
-	short validateClientResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode);
+	short ValidateClientResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode);
 	void ProcessImageReq(const sockaddr_in& clientAddress);
 	short ConsumeImageDataFromClientQueue(std::queue<std::string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
 		const u_short& expectedNumberOfPayloads, const sockaddr_in& clientAddress, long& imageBytesLeftToReceive);
-	short ValidateImageDataPayload(std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
+	short ValidateImageDataPayload(std::vector<std::string>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 	short CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
 		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		const sockaddr_in& clientAddress);
@@ -41,9 +38,9 @@ private:
 	short ProcessImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, uint& imageFileSize, 
 		ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams);
 	vector<u_short> calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
-	void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
+	void BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
-	short sendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
+	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend, const sockaddr_in& serverAddress);
 	void _RemoveClientDataFromMap(const string& clientAddressKey);
 

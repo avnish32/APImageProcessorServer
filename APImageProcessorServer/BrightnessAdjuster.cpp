@@ -1,7 +1,11 @@
 #include "BrightnessAdjuster.h"
+
 #include<iostream>
+#include<string>
 
 using std::cout;
+using std::to_string;
+
 using cv::Vec3b;
 
 float BrightnessAdjuster::_clampPixelValue(float unClampedValue, const float minValue, const float maxValue)
@@ -29,12 +33,14 @@ BrightnessAdjuster::BrightnessAdjuster(const float& brightnessAdjFactor)
 
 BrightnessAdjuster::~BrightnessAdjuster()
 {
-	cout << "\nDestroying BrightnessAdjuster.";
+	//cout << "\nDestroying BrightnessAdjuster.";
+	_msgLogger->LogDebug("Destroying BrightnessAdjuster.");
 }
 
 Mat BrightnessAdjuster::ApplyFilter(const Mat& sourceImage)
 {
-	cout << "\nAdjusting brightness. Adjustment factor: "<<_brightnessAdjFactor;
+	//cout << "\nAdjusting brightness. Adjustment factor: "<<_brightnessAdjFactor;
+	_msgLogger->LogError("Adjusting brightness. Adjustment factor: " + to_string(_brightnessAdjFactor));
 
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
 

@@ -43,12 +43,14 @@ Flipper::Flipper(const FlipDirection& flipDirection)
 
 Flipper::~Flipper()
 {
-	cout << "\nDestroying Flipper object.";
+	//cout << "\nDestroying Flipper object.";
+	_msgLogger->LogDebug("Destroying Flipper object.");
 }
 
 Mat Flipper::ApplyFilter(const Mat& sourceImage)
 {
-	cout << "\nApplying flip filter. Flip direction: "<<_flipDirection;
+	//cout << "\nApplying flip filter. Flip direction: "<<_flipDirection;
+	_msgLogger->LogError("Flipping image. Flip direction: " + _flipDirection);
 
 	switch (_flipDirection) {
 	case VERTICAL:

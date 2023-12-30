@@ -7,6 +7,8 @@
 #include<functional>
 #include<future>
 
+#include "MsgLogger.h"
+
 using namespace std;
 
 class ThreadPool
@@ -17,6 +19,7 @@ private:
 	mutex _mtx;
 	condition_variable _cv;
 	bool _isThreadPoolStopped = false;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	void init(int numThreads);
 
