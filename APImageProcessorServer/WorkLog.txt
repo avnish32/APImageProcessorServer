@@ -87,3 +87,14 @@ Filter request format:
 6. Brightness <Brigthness Adjustment Factor: 0 to n, where 0 will return a completely dark picture, 1 will return the same picture and 2 will double the brightness> e.g. Brightness 2.5
 29 Dec - Added image file size in metadata payload. This communicates actual number of bytes to expect, as often the image size is not exactly equal to width*height*number of channels, such as in Grayscale conversion or Brightness adjustment. In such cases, image dimensions stay the same but image size differs.
 29 Dec - Added functionality to construct image from payload map depending on the number of channels. This enables image construction for Grayscale filter.
+No references.
+
+30 Dec - Added code to show both original and processed images at the end of processing.
+30 Dec - Added logger to client and server.
+No References.
+
+31 Dec - Added timeout functionality while listening to client.
+31 Dec - Handled case when client unexpectedly terminates connection.
+31 Dec - Tested negative scenarios when data is not received for timeout duration, or when client terminates connection unexpectedly.
+References:
+To convert clock time to string: https://stackoverflow.com/a/52729233

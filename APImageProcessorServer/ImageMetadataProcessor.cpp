@@ -16,7 +16,8 @@ ImageMetadataProcessor::ImageMetadataProcessor(vector<string> imageMetadataStrin
 
 ImageMetadataProcessor::~ImageMetadataProcessor()
 {
-	cout << "\nImageMetadataProcessor destroyed.";
+	//cout << "\nImageMetadataProcessor destroyed.";
+	_msgLogger->LogDebug("ImageMetadataProcessor destroyed.");
 }
 
 short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize,

@@ -1,9 +1,15 @@
 #include "MsgLogger.h"
 
 #include<iostream>
+#include<string>
+#include<format>
+#include<chrono>
 
 using std::endl;
+using std::format;
 using std::this_thread::get_id;
+using std::chrono::time_point;
+using std::chrono::system_clock;
 
 MsgLogger::MsgLogger()
 {
@@ -29,15 +35,19 @@ MsgLogger* MsgLogger::GetInstance()
 
 void MsgLogger::LogDebug(const string& msg)
 {
+	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233
+	std::string timestamp = format("{:%Y-%m-%d %H:%M:%S}", system_clock::now());
 	_mtx.lock();
-	_logFile << "Thread: "<<get_id()<<" | "<< msg << endl;
+	_logFile << timestamp<<" | Thread ID: "<<get_id()<<" | "<< msg << endl;
 	_mtx.unlock();
 }
 
 void MsgLogger::LogError(const string& msg)
 {
+	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233
+	std::string timestamp = format("{:%Y-%m-%d %H:%M:%S}", system_clock::now());
 	_mtx.lock();
-	_logFile << "Thread: " << get_id() << " | " << msg << endl;
+	_logFile << timestamp << " | Thread ID: " << get_id() << " | " << msg << endl;
 	std::cout << "\n" << msg;
 	_mtx.unlock();
 }

@@ -11,25 +11,31 @@
 //TODO substitute this
 using namespace std;
 
+using std::chrono::high_resolution_clock;
+using chrono::duration_cast;
+
 UDPServer::UDPServer()
 {
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1) {
-		cout << "\nError while initialising WSA.";
+		//cout << "\nError while initialising WSA.";
+		_msgLogger->LogError("Error while initialising WSA.");
 		_socket = INVALID_SOCKET;
 	}
 	else {
 		_socket = socket(AF_INET, SOCK_DGRAM, 0);
 		if (_socket == INVALID_SOCKET) {
-			cout << "\nError while creating socket. Error code: " << WSAGetLastError();
+			//cout << "\nError while creating socket. Error code: " << WSAGetLastError();
+			_msgLogger->LogError("Error while creating socket. Error code: " + to_string(WSAGetLastError()));
 		}
 		else {
-			cout << "\nSocket created successfully.";
-			_msgLogger->LogDebug("Socket created successfully.");
+			//cout << "\nSocket created successfully.";
+			_msgLogger->LogError("Socket created successfully.");
 
 			u_long NON_BLOCKING_MODE_TRUE = 0;
 			if (ioctlsocket(_socket, FIONBIO, &NON_BLOCKING_MODE_TRUE) == SOCKET_ERROR) {
-				cout << "\nCould not set server socket to non-blocking mode.";
+				//cout << "\nCould not set server socket to non-blocking mode.";
+				_msgLogger->LogError("ERROR: Could not set server socket to non-blocking mode.");
 				_socket = INVALID_SOCKET;
 			}
 			sockaddr_in serverAddress;
@@ -38,12 +44,13 @@ UDPServer::UDPServer()
 			serverAddress.sin_port = 8080;
 			
 			if (bind(_socket, (const sockaddr*)&serverAddress, (int) sizeof(serverAddress)) == SOCKET_ERROR) {
-				cout << "\nError while binding server socket. Error code: " << WSAGetLastError();
+				//cout << "\nError while binding server socket. Error code: " << WSAGetLastError();
+				_msgLogger->LogError("Error while binding server socket. Error code: " + to_string(WSAGetLastError()));
 				_socket = INVALID_SOCKET;
 			}
 			else {
-				cout << "\nSocket bound successfully.";
-				_msgLogger->LogDebug("Socket bound successfully.");
+				//cout << "\nSocket bound successfully.";
+				_msgLogger->LogError("Server ready to receive requests!");
 			}
 		}
 	}
@@ -51,7 +58,8 @@ UDPServer::UDPServer()
 
 UDPServer::~UDPServer()
 {
-	cout << "\nUDPServer destructor called.";
+	//cout << "\nUDPServer destructor called.";
+	_msgLogger->LogError("UDPServer destructor called.");
 	WSACleanup();
 	closesocket(_socket);
 }
@@ -143,6 +151,11 @@ short checkImageDataMapIntegrity(map<u_short, string>* imageDataMap, const u_int
 	return RESPONSE_SUCCESS;
 }
 
+const std::string UDPServer::_MakeClientAddressKey(const sockaddr_in& clientAddress)
+{
+	return to_string(clientAddress.sin_addr.s_addr) + ":;" + to_string(clientAddress.sin_port);
+}
+
 //------------Member functions
 
 // Server maintains a map to store messages received from each client.
@@ -153,7 +166,7 @@ short checkImageDataMapIntegrity(map<u_short, string>* imageDataMap, const u_int
 
 short UDPServer::ReceiveClientMsg()
 {
-	if (_socket == INVALID_SOCKET) {
+	if (!IsValid()) {
 		_msgLogger->LogError("ERROR: Invalid socket.");
 		return RESPONSE_FAILURE;
 	}
@@ -161,27 +174,29 @@ short UDPServer::ReceiveClientMsg()
 	//Created local thread pool so threads will be joined before UDP Server gets destroyed.
 	//TODO This invalidates the overloaded operator() of thread pool.
 	ThreadPool threadPool(NUM_THREADS);
+	sockaddr_in* clientAddress = new sockaddr_in;
 
 	while (true) {
 		char* receivedData = new char[60025];
-		sockaddr_in clientAddress;
-		int clientAddrSize = sizeof(clientAddress);
+		int clientAddrSize = sizeof(*clientAddress);
 
-		long bytesRecdThisIteration = recvfrom(_socket, receivedData, 60025L, 0, (sockaddr*)&clientAddress, &clientAddrSize);
+		long bytesRecdThisIteration = recvfrom(_socket, receivedData, 60025L, 0, (sockaddr*)clientAddress, &clientAddrSize);
 
 		if (bytesRecdThisIteration == SOCKET_ERROR) {
 			int lastError = WSAGetLastError();
 
 			if (lastError != WSAEWOULDBLOCK) {
-				_msgLogger->LogError("Error in receiving image size data. Error code : " + to_string(lastError));
-				SendServerResponseToClient(SERVER_NEGATIVE_ACK, clientAddress, nullptr);
-				return RESPONSE_FAILURE;
+				_msgLogger->LogError("Error in receiving data from client. Error code : " + to_string(lastError));
+				SendServerResponseToClient(SERVER_NEGATIVE_ACK, *clientAddress, nullptr);
+				_RemoveClientDataFromMap(_MakeClientAddressKey(*clientAddress));
+				delete clientAddress;
+				clientAddress = new sockaddr_in;
 			}
 		}
 		else {
 			//cout << "\nImage data recd from client.";
 			_msgLogger->LogDebug("Image data recd from client.");
-			string clientAddressKey = to_string(clientAddress.sin_addr.s_addr) + ":;" + to_string(clientAddress.sin_port);
+			string clientAddressKey = _MakeClientAddressKey(*clientAddress);
 
 			_mtx.lock();
 			if (_clientToQueueMap.count(clientAddressKey) <= 0) {
@@ -189,7 +204,7 @@ short UDPServer::ReceiveClientMsg()
 				_msgLogger->LogDebug("Map entry not found for client address key: " + clientAddressKey);
 				queue<string> newClientQueue;
 				_clientToQueueMap[clientAddressKey] = newClientQueue;
-				threadPool.enqueue(bind(&UDPServer::ProcessImageReq, this, clientAddress));
+				threadPool.enqueue(bind(&UDPServer::ProcessImageReq, this, *clientAddress));
 			}
 			
 			string imageData = string(receivedData, bytesRecdThisIteration);
@@ -204,6 +219,9 @@ short UDPServer::ReceiveClientMsg()
 		}
 		delete[] receivedData;
 	}
+
+	delete clientAddress;
+	clientAddress = nullptr;
 }
 
 void UDPServer::ProcessImageReq(const sockaddr_in& clientAddress)
@@ -277,9 +295,9 @@ void UDPServer::ProcessImageReq(const sockaddr_in& clientAddress)
 
 	_msgLogger->LogError("Acknowledgement sent. Server response code: " + to_string(SERVER_POSITIVE_ACK));
 
+	//Saving original received image
 	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions, imageFileSize);
-	//imageProcessor.DisplayImage("Received Image");
-	imageProcessor.SaveImage();
+	//imageProcessor.SaveImage();
 
 	//Apply filter to image
 	Mat filteredImage = imageProcessor.ApplyFilter(filterType, filterParams);
@@ -290,7 +308,8 @@ void UDPServer::ProcessImageReq(const sockaddr_in& clientAddress)
 	//Send filtered image dimensions
 	responseCode = SendImageMetadataToClient(filteredImage, clientAddress);
 	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nCould not send metadata of processed image to client.";
+		//cout << "\nCould not send metadata of processed image to client.";
+		_msgLogger->LogError("Could not send metadata of processed image to client.");
 		_RemoveClientDataFromMap(clientAddressKey);
 		return;
 	}
@@ -313,7 +332,7 @@ void UDPServer::ProcessImageReq(const sockaddr_in& clientAddress)
 		return;
 	}
 
-	_msgLogger->LogError("Positive ACK recd from client. Sending processed image.");
+	_msgLogger->LogError("Positive ACK recd from client. Sending processed image...");
 
 	//Send processed image until positive ACK recd
 	responseCode = SendImage(filteredImage, clientAddress, clientQueue);
@@ -333,15 +352,22 @@ short UDPServer::ConsumeImageDataFromClientQueue(std::queue<std::string>& client
 {
 	long imageBytesRecd = 0;
 	short responseCode = RESPONSE_FAILURE;
-	auto lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
+	auto lastImagePayloadRecdTime = high_resolution_clock::now();
+	vector<u_short> missingPayloadSeqNumbers;
+
 	while (imageBytesLeftToReceive > 0) {
 
 		if (clientQueue.empty()) {
-			responseCode = CheckForTimeout(lastImagePayloadRecdTime, imagePayloadSeqMap, expectedNumberOfPayloads, clientAddress);
-			if (responseCode == RESPONSE_FAILURE) {
-				//cout << "\nError when sending response to client on timeout.";
-				_msgLogger->LogError("Error while sending response to client on timeout.");
-				return RESPONSE_FAILURE;
+
+			if (HasRequestTimedOut(lastImagePayloadRecdTime, IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS)) {
+				responseCode = SendMissingPayloadSeqNumbersToClient(imagePayloadSeqMap, expectedNumberOfPayloads,
+					missingPayloadSeqNumbers, clientAddress);
+				lastImagePayloadRecdTime = high_resolution_clock::now();
+				if (responseCode == RESPONSE_FAILURE) {
+					//cout << "\nError when sending response to client on timeout.";
+					_msgLogger->LogError("Error while sending response to client on timeout.");
+					return RESPONSE_FAILURE;
+				}
 			}
 			continue;
 		}
@@ -424,33 +450,40 @@ short UDPServer::ValidateImageDataPayload(std::vector<std::string>& splitImageDa
 	return RESPONSE_SUCCESS;
 }
 
-short UDPServer::CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime, 
-	std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads, 
-	const sockaddr_in& clientAddress)
+bool UDPServer::HasRequestTimedOut(high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration)
 {
-	short responseCode;
-
 	//Below snippet to calculate elapsed time taken from https://stackoverflow.com/a/31657669
-	auto now = chrono::high_resolution_clock::now();
-	auto timeElapsedSinceLastImagePayloadRecd = chrono::duration_cast<chrono::milliseconds>(now - lastImagePayloadRecdTime);
-	
-	// cout << "\ntimeElapsedSinceLastImagePayloadRecd: " << timeElapsedSinceLastImagePayloadRecd.count();
+	auto now = high_resolution_clock::now();
+	auto timeElapsedSinceLastMsgRecd = duration_cast<chrono::milliseconds>(now - lastMsgRecdTime);
 
-	if (timeElapsedSinceLastImagePayloadRecd.count() < IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS) {
-		return RESPONSE_SUCCESS;
+	if (timeElapsedSinceLastMsgRecd.count() >= timeoutDuration) {
+		return true;
 	}
-	
-	vector<u_short> missingSeqNumbers = calculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
-	//TODO keep a reference of missingSeqNumbers in prev call as a function param, compare it with this new vector.
-	//If both are same, then client is not active anymore. Return failure response.
-	if (missingSeqNumbers.size() > 0) {
-		responseCode = SendServerResponseToClient(SERVER_NEGATIVE_ACK, clientAddress, &missingSeqNumbers);
+
+	return false;
+}
+
+short UDPServer::SendMissingPayloadSeqNumbersToClient(std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads, 
+	vector<u_short>& missingPayloadSeqNumbersInLastTimeout, const sockaddr_in& clientAddress)
+{
+	short responseCode;	
+	vector<u_short> missingSeqNumbersInThisTimeout = CalculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
+
+	if (missingSeqNumbersInThisTimeout.size() > 0) {
+		if (missingPayloadSeqNumbersInLastTimeout == missingSeqNumbersInThisTimeout) {
+			
+			//Client did not send any more payloads since last timeout. Assuming that it is inactive now.
+			_msgLogger->LogError("Client is inactive.");
+			return RESPONSE_FAILURE;
+		}
+		missingPayloadSeqNumbersInLastTimeout = missingSeqNumbersInThisTimeout;
+		responseCode = SendServerResponseToClient(SERVER_NEGATIVE_ACK, clientAddress, &missingSeqNumbersInThisTimeout);
 	}
 	else {
 		responseCode = RESPONSE_SUCCESS;
 	}
 	
-	lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
+	//lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
 
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nERROR: Could not send response to client.";
@@ -475,11 +508,11 @@ short UDPServer::InitializeImageMetadata(cv::Size& imageDimensions, uint& imageF
 	return ProcessImageMetadataPayload(&imageMetadataString[0], imageDimensions, imageFileSize, filterType, filterParams);
 }
 
-long UDPServer::DrainQueue(std::queue<std::string>& clientQueue, std::string& msgInQueue)
+ushort UDPServer::DrainQueue(std::queue<std::string>& clientQueue, std::string& msgInQueue)
 {
-	long bytesRecd = 0;
+	ushort bytesRecd = 0;
 
-	while (!clientQueue.empty()) {
+	while (!clientQueue.empty() && !msgInQueue.ends_with('\0')) {
 
 		//cout << "\nDrainQueue::Before popping from queue.";
 		_msgLogger->LogDebug("DrainQueue::Before popping from queue.");
@@ -541,7 +574,7 @@ short UDPServer::ProcessImageMetadataPayload(char* receivedData, cv::Size& image
 	return imageMetadataProcessor.ValidateImageMetadata(imageDimensions, imageFileSize, filterTypeEnum, filterParams);
 }
 
-vector<u_short> UDPServer::calculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads)
+vector<u_short> UDPServer::CalculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads)
 {
 	vector<u_short> missingSeqNumbers;
 
@@ -587,7 +620,6 @@ short UDPServer::SendServerResponseToClient(short serverResponseCode, const sock
 	short bytesSent = sendto(_socket, &serverResponsePayload[0], serverResponsePayload.length()+1, 0, (const sockaddr*)&clientAddress, sizeof(clientAddress));
 	_mtx.unlock();
 
-	//TODO below check not working, bytes are sent even if client is not receiving
 	if (bytesSent <= 0) {
 		//cout << "\nError while sending acknowldgement to client. Error code: " << WSAGetLastError();
 		_msgLogger->LogError("Error while sending acknowldgement to client. Error code: " + to_string(WSAGetLastError()));
@@ -604,6 +636,7 @@ short UDPServer::SendImageMetadataToClient(const Mat& image, const sockaddr_in& 
 		.append(to_string(image.total()*image.elemSize())).append("\0");
 
 	_mtx.lock();
+
 	if (_socket == INVALID_SOCKET) {
 		//cout << "\nERROR: Invalid client socket.";
 		_msgLogger->LogError("ERROR: Invalid client socket.");
@@ -763,9 +796,19 @@ short UDPServer::ConsumeAndValidateClientMsgFromQueue(std::queue<std::string>& c
 {
 	string clientResponseRaw = "";
 	short responseCode = RESPONSE_SUCCESS;
+	auto lastMsgConsumedTime = high_resolution_clock::now();
 
 	while (!clientResponseRaw.ends_with('\0')) {
-		DrainQueue(clientQueue, clientResponseRaw);
+		ushort bytesRecdThisIteration = DrainQueue(clientQueue, clientResponseRaw);
+		if (bytesRecdThisIteration > 0) {
+			lastMsgConsumedTime = high_resolution_clock::now();
+			continue;
+		}
+		if (HasRequestTimedOut(lastMsgConsumedTime, CLIENT_MSG_RECV_TIMEOUT_MILLIS)) {
+			//Client is inactive.
+			_msgLogger->LogError("ERROR: Server timed out while waiting for client response.");
+			return RESPONSE_FAILURE;
+		}
 	}
 
 	//cout << "\nResponse from client: " << clientResponseRaw;
@@ -828,7 +871,7 @@ const Mat UDPServer::constructImageFromData(const char* imageData, const cv::Siz
 	return recdImage;
 }
 
-bool UDPServer::isValid()
+bool UDPServer::IsValid()
 {
 	_mtx.lock();
 	if (_socket != INVALID_SOCKET) {
@@ -887,7 +930,7 @@ void UDPServer::BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageD
 		payloadSequenceNum++;
 
 		//cout << "\nBytes processd: " << imageBytesProcessed;
-		_msgLogger->LogDebug("Bytes processed: " + to_string(imageBytesProcessed));
+		//_msgLogger->LogDebug("Bytes processed: " + to_string(imageBytesProcessed));
 	}
 }
 
@@ -908,15 +951,17 @@ short UDPServer::SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& im
 		}
 		
 		//TODO remove after testing
-		vector<string> payloadSplit = SplitString(payloadToSend, ' ', 5, sequenceNumToPayloadSizeMap[payloadSeqNumberToSend]);
+		//vector<string> payloadSplit = SplitString(payloadToSend, ' ', 5, sequenceNumToPayloadSizeMap[payloadSeqNumberToSend]);
 		
 		/*cout << "\nSent payload #" << payloadSeqNumberToSend
 			<<" | Payload split: "<<payloadSplit.at(0)<<" | "<<payloadSplit.at(1)<<" | "<<payloadSplit.at(2)<<" | "<<payloadSplit.at(3)
 			<<" | Length of image payload: "<<payloadSplit.at(4).length();*/
 
-		_msgLogger->LogDebug("Sent payload #" + to_string(payloadSeqNumberToSend)
+		/*_msgLogger->LogDebug("Sent payload #" + to_string(payloadSeqNumberToSend)
 			+ " | Payload split: " + payloadSplit.at(0) + " | " + payloadSplit.at(1) + " | " + payloadSplit.at(2) + " | " + payloadSplit.at(3)
-			+ " | Length of image payload: " + to_string((ushort)payloadSplit.at(4).length()));
+			+ " | Length of image payload: " + to_string((ushort)payloadSplit.at(4).length()));*/
+
+		_msgLogger->LogDebug("Sent payload #" + to_string(payloadSeqNumberToSend));
 	}
 
 	//cout << "\nImage payloads sent to client.";

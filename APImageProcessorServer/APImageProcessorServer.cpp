@@ -17,7 +17,7 @@ int main()
     cout << "Server application started.";
 
     UDPServer udpServer;
-    if (!udpServer.isValid()) {
+    if (!udpServer.IsValid()) {
         //cout << "\nError in socket creation. Application will exit now.";
         msgLogger->LogError("Error in socket creation. Application will exit now.");
         return RESPONSE_FAILURE;

@@ -1,5 +1,7 @@
 #include "Resizer.h"
 
+#include<opencv2/opencv.hpp>
+
 #include<iostream>
 #include<string>
 
@@ -40,11 +42,19 @@ Mat Resizer::ApplyFilter(const Mat& sourceImage)
 		return sourceImage;
 	}
 
+	_msgLogger->LogDebug("Resizer::source image type: "+ to_string(sourceImage.type()) + " | 8UC3: " + to_string(CV_8UC3));
+	
 	Mat targetImage = Mat(cv::Size(_targetWidth, _targetHeight), sourceImage.type());
 	for (int i = 0; i < _targetHeight; i++) {
 		for (int j = 0; j < _targetWidth; j++) {
+			//TODO remove after testing
+			//_msgLogger->LogDebug("i = " + to_string(i) + " | j= " + to_string(j));
 			int sourceImageRow = round(((float)i / _targetHeight) * sourceHeight);
 			int sourceImageCol = round(((float)j / _targetWidth) * sourceWidth);
+
+			sourceImageRow = MIN(sourceImageRow, sourceHeight - 1);
+			sourceImageCol = MIN(sourceImageCol, sourceWidth - 1);
+
 			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
 		}
 	}
