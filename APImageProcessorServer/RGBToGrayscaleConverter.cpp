@@ -1,8 +1,6 @@
 #include "RGBToGrayscaleConverter.h"
 #include<iostream>>
 
-using std::cout;
-
 using cv::split;
 
 /*
@@ -14,7 +12,6 @@ This formula was referred from https://www.baeldung.com/cs/convert-rgb-to-graysc
 */
 Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& sourceImage)
 {
-	//cout << "\nConverting from RGB to Grayscale.";
 	_msgLogger->LogError("Converting from RGB to Grayscale.");
 
 	//Initialize target image. Since this is a grayscale image, target need have only one channel

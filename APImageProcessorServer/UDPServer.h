@@ -8,10 +8,12 @@
 #include "Constants.h"
 #include "MsgLogger.h"
 
-//TODO subtitute this
-using namespace cv;
-
+using std::map;
+using std::string;
+using std::vector;
 using std::chrono::high_resolution_clock;
+
+using cv::Mat;
 
 #pragma once
 
@@ -26,19 +28,19 @@ class UDPServer
 private:
 	SOCKET _socket;
 	mutex _mtx;
-	map<std::string, queue<std::string>> _clientToQueueMap;
+	map<string, queue<string>> _clientToQueueMap;
 	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	void _ProcessImageReq(const sockaddr_in& clientAddress);
 
 	//Utility functions
-	const vector<std::string> _SplitString(char* inputString, char delimiter);
-	const vector<std::string> _SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
+	const vector<string> _SplitString(char* inputString, char delimiter);
+	const vector<string> _SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	bool _HasRequestTimedOut(high_resolution_clock::time_point& lastImagePayloadRecdTime, const ushort& timeoutDuration);
-	ushort _DrainQueue(std::queue<std::string>& clientQueue, std::string& imageSizeString);
+	ushort _DrainQueue(std::queue<string>& clientQueue, string& imageSizeString);
 	vector<u_short> _GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 	void _RemoveClientDataFromMap(const string& clientAddressKey);
-	const std::string _MakeClientAddressKey(const sockaddr_in& clientAddress);
+	const string _MakeClientAddressKey(const sockaddr_in& clientAddress);
 	short _InitializeImageMetadata(cv::Size& imageDimensions, uint& imageFileSize, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
 		std::queue<string>& clientQueue);
 	short _ProcessImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, uint& imageFileSize,
@@ -47,21 +49,21 @@ private:
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
 
 	//Validation functions
-	short _ValidateClientResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode);
-	short _ValidateImageDataPayload(std::vector<std::string>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
+	short _ValidateClientResponse(std::vector<string>& serverResponseSplit, short& serverResponseCode);
+	short _ValidateImageDataPayload(std::vector<string>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 
 	//Functions to send data to client
 	short _SendServerResponseToClient(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
-	short _SendMissingPayloadSeqNumbersToClient(std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
+	short _SendMissingPayloadSeqNumbersToClient(std::map<u_short, string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		vector<u_short>& missingPayloadSeqNumbersInLastTimeout, const sockaddr_in& clientAddress);
 	short _SendImageMetadataToClient(const Mat& image, const sockaddr_in& clientAddress);
-	short _SendImage(const cv::Mat& imageToSend, const sockaddr_in& clientAddress, queue<std::string>& clientQueue);
+	short _SendImage(const cv::Mat& imageToSend, const sockaddr_in& clientAddress, queue<string>& clientQueue);
 	short _SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend, const sockaddr_in& serverAddress);
 
 	//Functions to receive data from client
-	short _ConsumeAndValidateClientMsgFromQueue(std::queue<std::string>& clientQueue, std::vector<cv::String>& clientResponseSplit, short& clientResponseCode);
-	short _ConsumeImageDataFromClientQueue(std::queue<std::string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
+	short _ConsumeAndValidateClientMsgFromQueue(std::queue<string>& clientQueue, std::vector<cv::String>& clientResponseSplit, short& clientResponseCode);
+	short _ConsumeImageDataFromClientQueue(std::queue<string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
 		const u_short& expectedNumberOfPayloads, const sockaddr_in& clientAddress, long& imageBytesLeftToReceive);
 	
 

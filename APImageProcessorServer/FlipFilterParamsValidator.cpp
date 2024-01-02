@@ -1,9 +1,9 @@
 #include "FlipFilterParamsValidator.h"
+#include "Constants.h"
 
 #include<iostream>
 #include<string>
 
-using std::cout;
 using std::stoi;
 
 FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<float>& filterParams) :FilterParamsValidator(filterParams)
@@ -13,10 +13,13 @@ FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<float>& filter
 bool FlipFilterParamsValidator::ValidateFilterParams()
 {
 	short direction = _filterParams.at(0);
+	FlipDirection flipDirection = (FlipDirection)direction;
 
-	//TODO use enum for this
-	if (direction != 0 && direction != 1) {
-		//cout << "\nERROR: Invalid direction given for flipping.";
+	switch (flipDirection) {
+	case HORIZONTAL:
+	case VERTICAL:
+		break;
+	default:
 		_msgLogger->LogError("ERROR: Invalid direction given for flipping.");
 		return false;
 	}

@@ -3,7 +3,6 @@
 #include<iostream>
 #include<string>
 
-using std::cout;
 using std::stoi;
 
 CropFilterParamsValidator::CropFilterParamsValidator(const vector<float>& filterParams, Size imageDimensions) 
@@ -20,13 +19,11 @@ bool CropFilterParamsValidator::ValidateFilterParams()
 	short targetHeight = _filterParams.at(3);
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		//cout << "\nERROR: Invalid values for CROP filter parameters.";
 		_msgLogger->LogError("ERROR: Invalid values for CROP filter parameters.");
 		return false;
 	}
 
 	if (_IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
-		//cout << "\nERROR: Given coordinate lies outside the image.";
 		_msgLogger->LogError("ERROR: Given coordinate lies outside the image.");
 		return false;
 	}

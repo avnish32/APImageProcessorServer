@@ -9,7 +9,19 @@
 
 #include "MsgLogger.h"
 
-using namespace std;
+//using namespace std;
+using std::thread;
+using std::function;
+using std::condition_variable;
+using std::future;
+using std::invoke_result_t;
+using std::bind;
+using std::packaged_task;
+using std::make_shared;
+using std::move;
+using std::unique_lock;
+using std::vector;
+using std::queue;
 
 class ThreadPool
 {

@@ -3,7 +3,6 @@
 #include<iostream>
 #include<string>
 
-using std::cout;
 using std::to_string;
 
 using cv::Vec3b;
@@ -26,7 +25,6 @@ Cropper::Cropper(const u_short& cropTopLeftCornerX, const u_short& cropTopLeftCo
 
 Cropper::~Cropper()
 {
-	//cout << "\nCropper object destroyed.";
 	_msgLogger->LogDebug("Cropper object destroyed.");
 }
 
@@ -37,8 +35,6 @@ _targetWidth pixels and height of _targetHeight pixels.
 */
 Mat Cropper::ApplyFilter(const Mat& sourceImage)
 {
-	/*cout << "\nApplying crop filter Top left corner Coordinates: ("<<_cropTopLeftCornerX<<","<<_cropTopLeftCornerY
-		<< ") | Target width: " << _targetWidth << " | Target height: " << _targetHeight;*/
 	_msgLogger->LogError("Cropping image. Top left corner oordinates: (" + to_string(_cropTopLeftCornerX) + "," 
 		+ to_string(_cropTopLeftCornerY) + ") | Target width: " + to_string(_targetWidth) + " | Target height: " + to_string(_targetHeight));
 

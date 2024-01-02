@@ -3,7 +3,6 @@
 #include<iostream>
 #include<string>
 
-using std::cout;
 using std::to_string;
 
 using cv::Vec3b;
@@ -82,7 +81,6 @@ Rotator::Rotator(const RotationDirection& rotationMode, const u_short& numOfTurn
 
 Rotator::~Rotator()
 {
-	//cout << "\ndestroying Rotator.";
 	_msgLogger->LogDebug("Destroying Rotator.");
 }
 
@@ -92,7 +90,6 @@ and number of turns, and then calls the appropriate function.
 */
 Mat Rotator::ApplyFilter(const Mat& sourceImage)
 {
-	//cout << "\nApplyting rotate filter. Direction: "<<_direction<<" | Num of turns: "<<_numOfTurns;
 	_msgLogger->LogError("Rotating image. Direction: " + to_string(_direction) + " | Num of turns: " + to_string(_numOfTurns));
 
 	//Reference to rotate image: https://courses.cs.vt.edu/~masc1044/L17-Rotation/rotateScale.html

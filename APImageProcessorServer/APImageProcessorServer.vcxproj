@@ -144,16 +144,22 @@
     <ClCompile Include="FilterParamsValidatorFactory.cpp" />
     <ClCompile Include="FlipFilterParamsValidator.cpp" />
     <ClCompile Include="Flipper.cpp" />
+    <ClCompile Include="FourChannelImageConstructor.cpp" />
+    <ClCompile Include="ImageConstructor.cpp" />
+    <ClCompile Include="ImageConstructorFactory.cpp" />
     <ClCompile Include="ImageFilterFactory.cpp" />
     <ClCompile Include="ImageMetadataProcessor.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="MsgLogger.cpp" />
+    <ClCompile Include="OneChannelImageConstructor.cpp" />
     <ClCompile Include="ResizeFilterParamsValidator.cpp" />
     <ClCompile Include="Resizer.cpp" />
     <ClCompile Include="RGBToGrayscaleConverter.cpp" />
     <ClCompile Include="RotateFilterParamsValidator.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
+    <ClCompile Include="ThreeChannelImageConstructor.cpp" />
+    <ClCompile Include="TwoChannelImageConstructor.cpp" />
     <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,17 +172,23 @@
     <ClInclude Include="FilterParamsValidatorFactory.h" />
     <ClInclude Include="FlipFilterParamsValidator.h" />
     <ClInclude Include="Flipper.h" />
+    <ClInclude Include="FourChannelImageConstructor.h" />
+    <ClInclude Include="ImageConstructor.h" />
+    <ClInclude Include="ImageConstructorFactory.h" />
     <ClInclude Include="ImageFilter.h" />
     <ClInclude Include="ImageFilterFactory.h" />
     <ClInclude Include="ImageMetadataProcessor.h" />
     <ClInclude Include="ImageProcessor.h" />
     <ClInclude Include="MsgLogger.h" />
+    <ClInclude Include="OneChannelImageConstructor.h" />
     <ClInclude Include="ResizeFilterParamsValidator.h" />
     <ClInclude Include="Resizer.h" />
     <ClInclude Include="RGBToGrayscaleConverter.h" />
     <ClInclude Include="RotateFilterParamsValidator.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="ThreeChannelImageConstructor.h" />
+    <ClInclude Include="TwoChannelImageConstructor.h" />
     <ClInclude Include="UDPServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

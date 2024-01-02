@@ -4,10 +4,11 @@
 #include "FilterParamsValidatorFactory.h"
 
 #include<iostream>
+#include<string>
 
-using std::cout;
 using std::stoi;
 using std::stof;
+using std::to_string;
 
 ImageMetadataProcessor::ImageMetadataProcessor(vector<string> imageMetadataStringVector)
 {
@@ -16,7 +17,6 @@ ImageMetadataProcessor::ImageMetadataProcessor(vector<string> imageMetadataStrin
 
 ImageMetadataProcessor::~ImageMetadataProcessor()
 {
-	//cout << "\nImageMetadataProcessor destroyed.";
 	_msgLogger->LogDebug("ImageMetadataProcessor destroyed.");
 }
 
@@ -31,21 +31,17 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 {
 	//Sample payload: SIZE 1024 768 2359296 1 800 600
 	if (_imageMetadataVector.size() < MIN_IMAGE_METADATA_PARAMS) {
-		//cout << "\nERROR: Too few parameters in image metadata.";
 		_msgLogger->LogError("ERROR: Too few parameters in image metadata.");
 		return RESPONSE_FAILURE;
 	}
 
 	if (_imageMetadataVector.at(0) != SIZE_PAYLOAD_KEY) {
-		//cout << "\nClient sent image meta data in wrong format.";
 		_msgLogger->LogError("ERROR: Client sent image meta data in wrong format.");
 		return RESPONSE_FAILURE;
 	}
 	try {
 		imageDimensions = cv::Size(stoi(_imageMetadataVector.at(1)), stoi(_imageMetadataVector.at(2)));
-		imageFileSize = stoi(_imageMetadataVector.at(3));
-		//TODO check which exception is raised if enum is not found from int value
-		filterTypeEnum = (ImageFilterTypesEnum)(stoi(_imageMetadataVector.at(4)));
+		imageFileSize = stoi(_imageMetadataVector.at(3));		
 
 		if (_imageMetadataVector.size() > MIN_IMAGE_METADATA_PARAMS) {
 			for (int i = 5; i < _imageMetadataVector.size(); i++) {
@@ -54,8 +50,21 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 		}
 	}
 	catch (std::invalid_argument iaExp) {
-		//cout << "\nInvalid image size/filter values received.";
 		_msgLogger->LogError("ERROR: Invalid image size/filter values received.");
+		return RESPONSE_FAILURE;
+	}
+
+	filterTypeEnum = (ImageFilterTypesEnum)(stoi(_imageMetadataVector.at(4)));
+	switch (filterTypeEnum) {
+	case BRIGHTNESS_ADJ:
+	case CROP:
+	case FLIP:
+	case RESIZE:
+	case ROTATE:
+	case RGB_TO_GRAYSCALE:
+		break;
+	default:
+		_msgLogger->LogError("ERROR: Invalid filter type received: "+to_string(filterTypeEnum));
 		return RESPONSE_FAILURE;
 	}
 
@@ -63,7 +72,6 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 		filterParams, imageDimensions);
 
 	if (filterParamsValidator == nullptr || !filterParamsValidator->ValidateFilterParams()) {
-		//cout << "\nFilter parameter validation failed.";
 		_msgLogger->LogError("ERROR: Filter parameter validation failed.");
 		delete filterParamsValidator;
 		return RESPONSE_FAILURE;

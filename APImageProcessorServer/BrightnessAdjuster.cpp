@@ -3,7 +3,6 @@
 #include<iostream>
 #include<string>
 
-using std::cout;
 using std::to_string;
 
 using cv::Vec3b;
@@ -33,7 +32,6 @@ BrightnessAdjuster::BrightnessAdjuster(const float& brightnessAdjFactor)
 
 BrightnessAdjuster::~BrightnessAdjuster()
 {
-	//cout << "\nDestroying BrightnessAdjuster.";
 	_msgLogger->LogDebug("Destroying BrightnessAdjuster.");
 }
 
@@ -44,7 +42,6 @@ then clamping the value between 0 and 255.
 */
 Mat BrightnessAdjuster::ApplyFilter(const Mat& sourceImage)
 {
-	//cout << "\nAdjusting brightness. Adjustment factor: "<<_brightnessAdjFactor;
 	_msgLogger->LogError("Adjusting brightness. Adjustment factor: " + to_string(_brightnessAdjFactor));
 
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());

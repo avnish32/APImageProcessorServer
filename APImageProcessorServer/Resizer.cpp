@@ -7,7 +7,6 @@
 
 using cv::Vec3b;
 
-using std::cout;
 using std::to_string;
 
 Resizer::Resizer()
@@ -23,7 +22,6 @@ Resizer::Resizer(const u_short& targetWidth, const u_short& targetHeight)
 
 Resizer::~Resizer()
 {
-	//cout << "\nDestroying Resizer.";
 	_msgLogger->LogDebug("Destroying Resizer.");
 }
 
@@ -33,7 +31,6 @@ It utilizes the nearest-neighbor algorithm to calculate the pixel value of the r
 */
 Mat Resizer::ApplyFilter(const Mat& sourceImage)
 {
-	//cout << "\nApplying resize filter. Target width: "<<_targetWidth<<" | Target height: "<<_targetHeight;
 	_msgLogger->LogError("Resizing image. Target width: " + to_string(_targetWidth) 
 		+ " | Target height: " + to_string(_targetHeight));
 

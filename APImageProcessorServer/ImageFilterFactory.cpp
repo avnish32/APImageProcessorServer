@@ -16,7 +16,6 @@ with filterParams.
 ImageFilter* ImageFilterFactory::GetImageFilter(const ImageFilterTypesEnum& filterType, const std::vector<float>& filterParams)
 {
     MsgLogger* _msgLogger = MsgLogger::GetInstance();
-    //std::cout << "\nInside image filter factory. Filter type: " << filterType;
     _msgLogger->LogDebug("Inside image filter factory. Filter type: " + std::to_string(filterType));
 
     switch (filterType) {

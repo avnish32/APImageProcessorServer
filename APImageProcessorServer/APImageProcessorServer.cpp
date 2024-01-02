@@ -8,6 +8,8 @@
 
 #include<fstream>
 
+using std::cout;
+
 MsgLogger* MsgLogger::_loggerInstance = nullptr;
 
 int main()
@@ -18,7 +20,6 @@ int main()
 
     UDPServer udpServer;
     if (!udpServer.IsValid()) {
-        //cout << "\nError in socket creation. Application will exit now.";
         msgLogger->LogError("Error in socket creation. Application will exit now.");
         return RESPONSE_FAILURE;
     }

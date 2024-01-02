@@ -1,7 +1,6 @@
 #include "Flipper.h"
 
 using cv::Vec3b;
-using std::cout;
 
 /*
 This method flips the sourceImage horizontally by interchanging pixel values column-wise.
@@ -49,13 +48,11 @@ Flipper::Flipper(const FlipDirection& flipDirection)
 
 Flipper::~Flipper()
 {
-	//cout << "\nDestroying Flipper object.";
 	_msgLogger->LogDebug("Destroying Flipper object.");
 }
 
 Mat Flipper::ApplyFilter(const Mat& sourceImage)
 {
-	//cout << "\nApplying flip filter. Flip direction: "<<_flipDirection;
 	_msgLogger->LogError("Flipping image. Flip direction: " + _flipDirection);
 
 	switch (_flipDirection) {

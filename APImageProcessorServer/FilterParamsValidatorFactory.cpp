@@ -18,10 +18,8 @@ FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(co
 	case RESIZE:
 		return new ResizeFilterParamsValidator(filterParams);
 	case ROTATE:
-		//TODO can consider taking direction input as string instead of numbers
 		return new RotateFilterParamsValidator(filterParams);
 	case FLIP:
-		//TODO can consider taking direction input as string instead of numbers
 		return new FlipFilterParamsValidator(filterParams);
 	case CROP:
 		return new CropFilterParamsValidator(filterParams, imageDimensions);
