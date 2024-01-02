@@ -35,6 +35,9 @@ public:
 
 };
 
+/*
+This function enqueues the task fn and its arguments args... into the task queue and notifies a thread.
+*/
 template<typename F, typename ...Args>
 inline future<invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& fn, Args&& ...args)
 {

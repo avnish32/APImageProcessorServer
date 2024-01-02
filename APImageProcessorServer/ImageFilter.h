@@ -7,6 +7,11 @@ typedef unsigned short u_short;
 using cv::Mat;
 
 #pragma once
+
+/*
+This is an abstract class having a pure virtual function called ApplyFilter.
+Its children contain the filter application logic for their respective filters.
+*/
 class ImageFilter
 {
 protected:

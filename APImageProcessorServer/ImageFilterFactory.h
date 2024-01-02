@@ -7,6 +7,10 @@
 
 #pragma once
 
+/*
+This is the factory class for objects of the ImageFilter class.
+It instantiates an ImageFilter object depending on the type of the filter it receives.
+*/
 class ImageFilterFactory
 {
 public:

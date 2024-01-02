@@ -30,6 +30,11 @@ Cropper::~Cropper()
 	_msgLogger->LogDebug("Cropper object destroyed.");
 }
 
+/*
+This function crops the image by considering only the pixels covered inside the rectangle
+starting at the coordinates (_cropTopLeftCornerX, _cropTopLeftCornerY) and having width of
+_targetWidth pixels and height of _targetHeight pixels.
+*/
 Mat Cropper::ApplyFilter(const Mat& sourceImage)
 {
 	/*cout << "\nApplying crop filter Top left corner Coordinates: ("<<_cropTopLeftCornerX<<","<<_cropTopLeftCornerY

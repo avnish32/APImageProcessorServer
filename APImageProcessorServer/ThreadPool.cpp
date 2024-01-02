@@ -9,6 +9,14 @@ using std::to_string;
 
 typedef unsigned short ushort;
 
+/*
+This function initializes the thread pool with numOfThreads threads.
+Each thread is configured to wait until a task is pushed into the task queue,
+and then it picks the task and starts executing it. Once done, it goes into the
+waiting state again until another task is pushed, or the thread pool is stopped,
+ whichever occurs earlier. 
+ The thread behaviour is defined using an internal lambda function.
+*/
 void ThreadPool::init(int numThreads)
 {
 	auto executeThreadLambda = [this]() {
@@ -60,6 +68,12 @@ ThreadPool::ThreadPool(int numThreads)
 	init(numThreads);
 }
 
+/*
+Destructor for the thread pool.
+It tells the thread pool to stop and notifies all running threads about the same.
+Also joins all the worker threads to the main thread so each thread may finish its
+execution before the application terminates.
+*/
 ThreadPool::~ThreadPool()
 {
 	//cout << "\nThread pool destructor called.";

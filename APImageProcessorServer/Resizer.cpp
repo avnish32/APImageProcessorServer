@@ -27,6 +27,10 @@ Resizer::~Resizer()
 	_msgLogger->LogDebug("Destroying Resizer.");
 }
 
+/*
+This function resizes the sourceImage into an image having width - _targetWidth pixels and height = _targetHeight pixels.
+It utilizes the nearest-neighbor algorithm to calculate the pixel value of the resultant image.
+*/
 Mat Resizer::ApplyFilter(const Mat& sourceImage)
 {
 	//cout << "\nApplying resize filter. Target width: "<<_targetWidth<<" | Target height: "<<_targetHeight;
@@ -41,14 +45,10 @@ Mat Resizer::ApplyFilter(const Mat& sourceImage)
 	if (sourceWidth == _targetWidth && sourceHeight == _targetHeight) {
 		return sourceImage;
 	}
-
-	_msgLogger->LogDebug("Resizer::source image type: "+ to_string(sourceImage.type()) + " | 8UC3: " + to_string(CV_8UC3));
 	
 	Mat targetImage = Mat(cv::Size(_targetWidth, _targetHeight), sourceImage.type());
 	for (int i = 0; i < _targetHeight; i++) {
 		for (int j = 0; j < _targetWidth; j++) {
-			//TODO remove after testing
-			//_msgLogger->LogDebug("i = " + to_string(i) + " | j= " + to_string(j));
 			int sourceImageRow = round(((float)i / _targetHeight) * sourceHeight);
 			int sourceImageCol = round(((float)j / _targetWidth) * sourceWidth);
 

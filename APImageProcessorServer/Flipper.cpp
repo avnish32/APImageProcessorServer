@@ -3,6 +3,9 @@
 using cv::Vec3b;
 using std::cout;
 
+/*
+This method flips the sourceImage horizontally by interchanging pixel values column-wise.
+*/
 Mat Flipper::_FlipHorizontally(const Mat& sourceImage)
 {
 	//Initialize target image
@@ -17,6 +20,9 @@ Mat Flipper::_FlipHorizontally(const Mat& sourceImage)
 	return targetImage;
 }
 
+/*
+This method flips the sourceImage vertically by interchanging the pixel values row-wise.
+*/
 Mat Flipper::_FlipVertically(const Mat& sourceImage)
 {
 	//Initialize target image

@@ -5,6 +5,10 @@
 #include "ResizeFilterParamsValidator.h"
 #include "RotateFilterParamsValidator.h"
 
+/*
+This function checks filterType and instantiates an object of the corresponding concrete derived class of FilterParamsValidator
+with filterParams and imageDimensions.
+*/
 FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(const ImageFilterTypesEnum& filterType,
     const vector<float>& filterParams, const cv::Size& imageDimensions)
 {

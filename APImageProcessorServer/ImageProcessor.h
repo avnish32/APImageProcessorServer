@@ -13,6 +13,9 @@ using cv::Size;
 using std::map;
 using std::vector;
 
+/*
+This class handles various tasks related to the processing of image.
+*/
 class ImageProcessor
 {
 private:

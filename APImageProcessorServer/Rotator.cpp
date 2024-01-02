@@ -86,6 +86,10 @@ Rotator::~Rotator()
 	_msgLogger->LogDebug("Destroying Rotator.");
 }
 
+/*
+This function determines the effective rotation based on the rotation direction
+and number of turns, and then calls the appropriate function.
+*/
 Mat Rotator::ApplyFilter(const Mat& sourceImage)
 {
 	//cout << "\nApplyting rotate filter. Direction: "<<_direction<<" | Num of turns: "<<_numOfTurns;

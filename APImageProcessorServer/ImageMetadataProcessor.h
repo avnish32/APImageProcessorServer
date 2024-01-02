@@ -10,6 +10,10 @@ using std::string;
 
 #pragma once
 
+/*
+This class deals with various operations on information about the image,
+such as its dimensions, size and the filter to be applied on it.
+*/
 class ImageMetadataProcessor
 {
 private:

@@ -37,6 +37,11 @@ BrightnessAdjuster::~BrightnessAdjuster()
 	_msgLogger->LogDebug("Destroying BrightnessAdjuster.");
 }
 
+/*
+This function adjusts the brightness of the image by first splitting it into its constituent channels,
+multiplying the pixel value in each channel by the brightness adjustment factor and 
+then clamping the value between 0 and 255.
+*/
 Mat BrightnessAdjuster::ApplyFilter(const Mat& sourceImage)
 {
 	//cout << "\nAdjusting brightness. Adjustment factor: "<<_brightnessAdjFactor;

@@ -25,6 +25,9 @@ MsgLogger::~MsgLogger()
 	_mtx.unlock();
 }
 
+/*
+Static method to enforce the singleton pattern.
+*/
 MsgLogger* MsgLogger::GetInstance()
 {
 	if (_loggerInstance == nullptr) {
@@ -33,6 +36,10 @@ MsgLogger* MsgLogger::GetInstance()
 	return _loggerInstance;
 }
 
+/*
+Function to log a message in debug mode.
+It writes only to the external log file.
+*/
 void MsgLogger::LogDebug(const string& msg)
 {
 	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233
@@ -42,6 +49,10 @@ void MsgLogger::LogDebug(const string& msg)
 	_mtx.unlock();
 }
 
+/*
+Function to log a message in error mode.
+It writes to the external log file as well as the console.
+*/
 void MsgLogger::LogError(const string& msg)
 {
 	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233

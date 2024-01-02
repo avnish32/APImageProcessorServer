@@ -9,6 +9,10 @@
 
 #include<string>
 
+/*
+This function checks filterType and instantiates an object of the corresponding concrete derived class of ImageFilter
+with filterParams.
+*/
 ImageFilter* ImageFilterFactory::GetImageFilter(const ImageFilterTypesEnum& filterType, const std::vector<float>& filterParams)
 {
     MsgLogger* _msgLogger = MsgLogger::GetInstance();

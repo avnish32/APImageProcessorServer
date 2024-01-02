@@ -5,6 +5,11 @@
 #include<vector>
 
 #pragma once
+
+/*
+This is the factory class for objects of the FilterParamsValidator class.
+It instantiates a FilterParamsValidator object depending on the type of the filter it receives.
+*/
 class FilterParamsValidatorFactory
 {
 public:

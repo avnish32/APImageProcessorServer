@@ -23,15 +23,5 @@ int main()
         return RESPONSE_FAILURE;
     }
     
-    short responseCode = udpServer.ReceiveClientMsg();
-    /*if (responseCode == RESPONSE_FAILURE) {
-        responseCode = udpServer.sendAck(SERVER_NEGATIVE_ACK);
-        if (responseCode == RESPONSE_FAILURE) {
-            cout << "\nError in sending acknowldgement. Client disconnected.";
-        }
-    }*/
-    
-    /*if (serverResponseCode == SERVER_POSITIVE_ACK) {
-        udpServer.receiveImage();
-    }*/
+    short responseCode = udpServer.StartReceivingClientMsgs();
 }

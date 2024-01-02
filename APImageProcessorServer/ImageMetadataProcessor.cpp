@@ -20,6 +20,12 @@ ImageMetadataProcessor::~ImageMetadataProcessor()
 	_msgLogger->LogDebug("ImageMetadataProcessor destroyed.");
 }
 
+/*
+This function validates the image metadata.
+A valid image metadata has the following format: 
+"SIZE <image width> <image height> <image size in bytes> <filter type> <filter params...>"
+without the quotes.
+*/
 short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize,
 	ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams)
 {
