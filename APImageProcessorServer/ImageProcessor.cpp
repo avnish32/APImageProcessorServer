@@ -143,7 +143,7 @@ void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string
 }
 
 /*
-This function constructs a four channel image having the given imageDimensions
+This function constructs a quadruple channel image having the given imageDimensions
 from the imageDataMap.
 */
 void ImageProcessor::_ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)

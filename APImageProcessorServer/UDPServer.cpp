@@ -852,7 +852,8 @@ short UDPServer::_ConsumeImageDataFromClientQueue(std::queue<std::string>& clien
 		//cout << "\nQueue msg size before splitting: " << clientQueue.front().length();
 		_msgLogger->LogDebug("Queue msg size before splitting: " + to_string((ushort)clientQueue.front().length()));
 
-		vector<string> splitImageDataPayload = _SplitString(&(clientQueue.front()[0]), ' ', 5, clientQueue.front().length());
+		vector<string> splitImageDataPayload = _SplitString(&(clientQueue.front()[0]), CLIENT_RESPONSE_DELIMITER, 5,
+			clientQueue.front().length());
 
 		//cout << "\nSplit image payload size: " << splitImageDataPayload.size();
 		_msgLogger->LogDebug("Split image payload size: " + to_string((ushort)splitImageDataPayload.size()));

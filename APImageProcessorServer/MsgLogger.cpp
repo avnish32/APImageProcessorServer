@@ -37,7 +37,7 @@ MsgLogger* MsgLogger::GetInstance()
 }
 
 /*
-Function to log a message in debug mode.
+Function to log a message on debug level.
 It writes only to the external log file.
 */
 void MsgLogger::LogDebug(const string& msg)
@@ -50,7 +50,7 @@ void MsgLogger::LogDebug(const string& msg)
 }
 
 /*
-Function to log a message in error mode.
+Function to log a message on error level.
 It writes to the external log file as well as the console.
 */
 void MsgLogger::LogError(const string& msg)
