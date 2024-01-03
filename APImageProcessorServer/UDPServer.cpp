@@ -418,7 +418,6 @@ Validation functions
 */
 short UDPServer::_ValidateClientResponse(std::vector<std::string>& clientResponseSplit, short& clientResponseCode)
 {
-	//TODO remove cout calls
 	_msgLogger->LogDebug("Validating client response.");
 
 	if (clientResponseSplit.size() < MIN_CLIENT_RESPONSE_PARAMS || clientResponseSplit.at(0) != RESPONSE_PAYLOAD_KEY) {
@@ -496,7 +495,7 @@ short UDPServer::_SendServerResponseToClient(short serverResponseCode, const soc
 	}
 	string serverResponsePayload = string(RESPONSE_PAYLOAD_KEY).append(SERVER_MSG_DELIMITER)
 		.append(to_string(serverResponseCode)).append(SERVER_MSG_DELIMITER)
-		.append(missingSeqNumbersString).append(to_string(STRING_TERMINATING_CHAR));
+		.append(missingSeqNumbersString).append(EMPTY_STRING + STRING_TERMINATING_CHAR);
 
 		_msgLogger->LogDebug("Server response string: " + serverResponsePayload + " | String length: " 
 		+ to_string((ushort)serverResponsePayload.length()));
@@ -758,7 +757,7 @@ short UDPServer::_ConsumeImageDataFromClientQueue(std::queue<std::string>& clien
 
 		_msgLogger->LogDebug("Queue msg size before splitting: " + to_string((ushort)clientQueue.front().length()));
 
-		vector<string> splitImageDataPayload = _SplitString(&(clientQueue.front()[0]), CLIENT_RESPONSE_DELIMITER, 5,
+		vector<string> splitImageDataPayload = _SplitString(&(clientQueue.front()[0]), CLIENT_RESPONSE_DELIMITER, NUM_OF_IMAGE_DATA_PARAMS,
 			clientQueue.front().length());
 
 		_msgLogger->LogDebug("Split image payload size: " + to_string((ushort)splitImageDataPayload.size()));

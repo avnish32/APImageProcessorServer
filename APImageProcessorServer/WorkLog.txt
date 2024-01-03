@@ -98,3 +98,18 @@ No References.
 31 Dec - Tested negative scenarios when data is not received for timeout duration, or when client terminates connection unexpectedly.
 References:
 To convert clock time to string: https://stackoverflow.com/a/52729233
+
+01 Jan - Added documentation comments .
+No references.
+
+02 Jan - Todo list cleanup at server and client.
+02 Jan - Added image constructor factory at server to construct n-channel images based on number of channels calculated.
+02 Jan - Implemented handling for string input instead of integers for flip and rotation directions in arguments.
+The new input format for Rotation and Flip is as below:
+1. Rotate <Direction: Clockwise/Anti-clockwise> <Number of turns> e.g. Rotate Clockwise 3 (NB rotation direction i.e. Clockwise/Anti-clockwise is case sensitive, please input either in lowercase or sentence case).
+2. Flip <Direction: Horizontal/Vertical> e.g. Flip Horizontal (NB flip direction i.e. Horizontal/Vertical is case sensitive, please input either in sentence case or lower case).
+02 Jan - Added regex validation for server URL at client.
+02 Jan - Shifted hardcoded values to constants.h at server and client.
+02 Jan - Fixed bug where images were not displayed correctly in case of multiple threads on client.
+References:
+Regex documentation: https://en.cppreference.com/w/cpp/regex

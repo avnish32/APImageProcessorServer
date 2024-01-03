@@ -1,4 +1,5 @@
 #include "TwoChannelImageConstructor.h"
+#include "Constants.h"
 
 #include<string>
 
@@ -30,7 +31,7 @@ Mat TwoChannelImageConstructor::ConstructImage()
 
 	for (int i = 0; i < _imageDimensions.height; i++) {
 		for (int j = 0; j < _imageDimensions.width; j++) {
-			if (currentImageFragmentByte >= 60000) {
+			if (currentImageFragmentByte >= MAX_IMAGE_DATA_BYTES_IN_ONE_PAYLOAD) {
 				currentImageFragment++;
 				currentImageFragmentData = &(_imageDataMap[currentImageFragment][0]);
 				currentImageFragmentByte = 0;

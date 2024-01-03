@@ -30,6 +30,7 @@ const string SERVER_MSG_DELIMITER = " ";
 const char CLIENT_RESPONSE_DELIMITER = ' ';
 const string CLIENT_ADDRESS_KEY_DELIMITER = ":;";
 const char STRING_TERMINATING_CHAR = '\0';
+const string STRING_TERMINATING_CHAR_AS_STRING = "\0";
 const string EMPTY_STRING = "";
 
 const ushort IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS = 2000;
