@@ -9,11 +9,11 @@ using cv::Vec3b;
 
 Mat Rotator::_RotateClockwiseOnce(const Mat& sourceImage)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	ushort sourceWidth = sourceImage.cols;
+	ushort sourceHeight = sourceImage.rows;
 
-	u_short targetWidth = sourceHeight;
-	u_short targetHeight = sourceWidth;
+	ushort targetWidth = sourceHeight;
+	ushort targetHeight = sourceWidth;
 
 	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), sourceImage.type());
 
@@ -30,11 +30,11 @@ Mat Rotator::_RotateClockwiseOnce(const Mat& sourceImage)
 
 Mat Rotator::_RotateAntiClockwiseOnce(const Mat& sourceImage)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	ushort sourceWidth = sourceImage.cols;
+	ushort sourceHeight = sourceImage.rows;
 
-	u_short targetWidth = sourceHeight;
-	u_short targetHeight = sourceWidth;
+	ushort targetWidth = sourceHeight;
+	ushort targetHeight = sourceWidth;
 
 	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), sourceImage.type());
 
@@ -51,8 +51,8 @@ Mat Rotator::_RotateAntiClockwiseOnce(const Mat& sourceImage)
 
 Mat Rotator::_RotateTwice(const Mat& sourceImage)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	ushort sourceWidth = sourceImage.cols;
+	ushort sourceHeight = sourceImage.rows;
 
 	Mat targetImage = Mat(cv::Size(sourceWidth, sourceHeight), sourceImage.type());
 
@@ -73,7 +73,7 @@ Rotator::Rotator()
 	_numOfTurns = 0;
 }
 
-Rotator::Rotator(const RotationDirection& rotationMode, const u_short& numOfTurns)
+Rotator::Rotator(const RotationDirection& rotationMode, const ushort& numOfTurns)
 {
 	_direction = rotationMode;
 	_numOfTurns = numOfTurns;

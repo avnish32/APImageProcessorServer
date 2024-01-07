@@ -195,4 +195,7 @@
       <Filter>Header Files\Image Constructors</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>

@@ -14,8 +14,8 @@ Cropper::Cropper()
 	_targetHeight = 1;
 }
 
-Cropper::Cropper(const u_short& cropTopLeftCornerX, const u_short& cropTopLeftCornerY,
-	const u_short& targetWidth, const u_short& targetHeight)
+Cropper::Cropper(const ushort& cropTopLeftCornerX, const ushort& cropTopLeftCornerY,
+	const ushort& targetWidth, const ushort& targetHeight)
 {
 	_cropTopLeftCornerX = cropTopLeftCornerX;
 	_cropTopLeftCornerY = cropTopLeftCornerY;

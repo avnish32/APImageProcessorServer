@@ -2,7 +2,7 @@
 
 #include "MsgLogger.h"
 
-typedef unsigned short u_short;
+typedef unsigned short ushort;
 
 using cv::Mat;
 

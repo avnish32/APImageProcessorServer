@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ImageMetadataProcessor">
+    <Position X="18.5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAIAAAIIAAAAAAgAAAAAA=</HashCode>
+      <FileName>ImageMetadataProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageProcessor">
+    <Position X="22.25" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgIAAQAAQAAAAQIAAAAAAQAAAABA=</HashCode>
+      <FileName>ImageProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgLogger">
+    <Position X="20" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICABAAAAAAAAAAAAAAAAJAABAAAABABCAAAAAAA=</HashCode>
+      <FileName>MsgLogger.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThreadPool">
+    <Position X="17.75" Y="7.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAACAAAAAAAAAAAAAAAAAAAAAIIABABAAAABSAA=</HashCode>
+      <FileName>ThreadPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UDPServer">
+    <Position X="21.75" Y="7.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>EBAACEAAAAAACADDDAgAAAgAgABAIYgAIABSYAAABEA=</HashCode>
+      <FileName>UDPServer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BrightnessAdjuster">
+    <Position X="3.5" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAQAAAAABAAAAAAgAAAAAAEAA=</HashCode>
+      <FileName>BrightnessAdjuster.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cropper">
+    <Position X="8.5" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAgAAQAAAAAIAAAAAAAAAABgAAEA=</HashCode>
+      <FileName>Cropper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Flipper">
+    <Position X="13.25" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAgAAEAQAAAAAAAAQAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Flipper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageFilter">
+    <Position X="7" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageFilter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageFilterFactory">
+    <Position X="9.25" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageFilterFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Resizer">
+    <Position X="1.25" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAkAAQAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Resizer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RGBToGrayscaleConverter">
+    <Position X="6.25" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RGBToGrayscaleConverter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rotator">
+    <Position X="10.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQgABAAAAAAAAAQAAAAAAgAAAAAAAIAAAAAEI=</HashCode>
+      <FileName>Rotator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BrightnessAdjFilterParamsValidator">
+    <Position X="8.25" Y="11.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrightnessAdjFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CropFilterParamsValidator">
+    <Position X="1" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CropFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilterParamsValidator">
+    <Position X="5.75" Y="8.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAQgAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAAAAAAA=</HashCode>
+      <FileName>FilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilterParamsValidatorFactory">
+    <Position X="9.25" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FilterParamsValidatorFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlipFilterParamsValidator">
+    <Position X="3.5" Y="11.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FlipFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResizeFilterParamsValidator">
+    <Position X="5.75" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ResizeFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RotateFilterParamsValidator">
+    <Position X="11.25" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RotateFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FourChannelImageConstructor">
+    <Position X="0.75" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAA=</HashCode>
+      <FileName>FourChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageConstructor">
+    <Position X="5.25" Y="14" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAgAAAAAAAAAAAAABAAIAAAIAAAAAAAAA=</HashCode>
+      <FileName>ImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageConstructorFactory">
+    <Position X="7.25" Y="14" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageConstructorFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OneChannelImageConstructor">
+    <Position X="3.5" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAAAIAAQAAAAAAAAAA=</HashCode>
+      <FileName>OneChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThreeChannelImageConstructor">
+    <Position X="6.25" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIIAAAAEAAAAAAA=</HashCode>
+      <FileName>ThreeChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TwoChannelImageConstructor">
+    <Position X="9" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAIAAAACAAAAAAAA=</HashCode>
+      <FileName>TwoChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Typedef Name="ushort" Collapsed="true">
+    <Position X="20.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageFilter.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="RotationDirection">
+    <Position X="22.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAABAAAAAA=</HashCode>
+      <FileName>Constants.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FlipDirection">
+    <Position X="18.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Constants.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ImageFilterTypesEnum">
+    <Position X="20.5" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAgAAAAAEAAQAQAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constants.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

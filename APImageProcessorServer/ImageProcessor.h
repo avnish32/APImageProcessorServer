@@ -22,12 +22,6 @@ private:
 	Mat _image;
 	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
-	cv::String _GetAddressToSaveImage();
-	void _ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-
 public:
 	ImageProcessor();
 	ImageProcessor(Mat image);
@@ -38,9 +32,7 @@ public:
 
 	Mat ApplyFilter(ImageFilterTypesEnum filterType, vector<float> filterParams);
 
-	void SaveImage();
 	void SaveImage(cv::String saveAddress);
-	void SaveImage(Mat imageToSave);
 	void SaveImage(Mat imageToSave, cv::String saveAddress);
 
 	Mat GetImage();

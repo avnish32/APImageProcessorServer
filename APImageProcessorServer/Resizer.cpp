@@ -14,7 +14,7 @@ Resizer::Resizer()
 	_targetWidth = _targetHeight = 1;
 }
 
-Resizer::Resizer(const u_short& targetWidth, const u_short& targetHeight)
+Resizer::Resizer(const ushort& targetWidth, const ushort& targetHeight)
 {
 	_targetWidth = targetWidth;
 	_targetHeight = targetHeight;
@@ -36,8 +36,8 @@ Mat Resizer::ApplyFilter(const Mat& sourceImage)
 
 	//Params reqd in payload: targetWidth, targetHeight
 	//Nearest-neighbor algorithm used for resizing. Reference: https://courses.cs.vt.edu/~masc1044/L17-Rotation/ScalingNN.html
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	ushort sourceWidth = sourceImage.cols;
+	ushort sourceHeight = sourceImage.rows;
 
 	if (sourceWidth == _targetWidth && sourceHeight == _targetHeight) {
 		return sourceImage;
