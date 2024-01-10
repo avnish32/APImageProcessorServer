@@ -26,50 +26,45 @@ using cv::Mat;
 class UDPServer
 {
 private:
-	SOCKET _socket;
-	mutex _mtx;
-	map<string, queue<string>> _clientToQueueMap;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	SOCKET socket_;
+	mutex mtx_;
+	map<string, queue<string>> client_queue_map_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	void _ProcessImageReq(const sockaddr_in& clientAddress);
+	void ProcessImageReq(const sockaddr_in& clientAddress);
 
 	//Utility functions
-	const vector<string> _SplitString(char* inputString, char delimiter);
-	const vector<string> _SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
-	bool _HasRequestTimedOut(high_resolution_clock::time_point& lastImagePayloadRecdTime, const ushort& timeoutDuration);
-	ushort _DrainQueue(std::queue<string>& clientQueue, string& imageSizeString);
-	vector<u_short> _GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
-	void _RemoveClientDataFromMap(const string& clientAddressKey);
-	const string _MakeClientAddressKey(const sockaddr_in& clientAddress);
-	short _InitializeImageMetadata(cv::Size& imageDimensions, uint& imageFileSize, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
+	const vector<string> SplitString(char* inputString, char delimiter);
+	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
+	bool HasRequestTimedOut(high_resolution_clock::time_point& lastImagePayloadRecdTime, const u_short& timeoutDuration);
+	u_short DrainQueue(std::queue<string>& clientQueue, string& imageSizeString);
+	vector<u_short> GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
+	void RemoveClientDataFromMap(const string& clientAddressKey);
+	const string MakeClientAddressKey(const sockaddr_in& clientAddress);
+	short InitializeImageMetadata(cv::Size& imageDimensions, uint& imageFileSize, ImageFilterTypesEnum& filterType, vector<float>& filterParams,
 		std::queue<string>& clientQueue);
-	short _ProcessImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, uint& imageFileSize,
+	short ProcessImageMetadataPayload(char* receivedData, cv::Size& imageDimensions, uint& imageFileSize,
 		ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams);
-	void _BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
+	void BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
 
 	//Validation functions
-	short _ValidateClientResponse(std::vector<string>& serverResponseSplit, short& serverResponseCode);
-	short _ValidateImageDataPayload(std::vector<string>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
+	short ValidateClientResponse(std::vector<string>& serverResponseSplit, short& serverResponseCode);
+	short ValidateImageDataPayload(std::vector<string>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 
 	//Functions to send data to client
-	short _SendServerResponseToClient(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
-	short _SendMissingPayloadSeqNumbersToClient(std::map<u_short, string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
+	short SendServerResponseToClient(short serverResponseCode, const sockaddr_in& clientAddress, const vector<u_short>* missingSeqNumbers);
+	short SendMissingPayloadSeqNumbersToClient(std::map<u_short, string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads,
 		vector<u_short>& missingPayloadSeqNumbersInLastTimeout, const sockaddr_in& clientAddress);
-	short _SendImageMetadataToClient(const Mat& image, const sockaddr_in& clientAddress);
-	short _SendImage(const cv::Mat& imageToSend, const sockaddr_in& clientAddress, queue<string>& clientQueue);
-	short _SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
+	short SendImageMetadataToClient(const Mat& image, const sockaddr_in& clientAddress);
+	short SendImage(const cv::Mat& imageToSend, const sockaddr_in& clientAddress, queue<string>& clientQueue);
+	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend, const sockaddr_in& serverAddress);
 
 	//Functions to receive data from client
-	short _ConsumeAndValidateClientMsgFromQueue(std::queue<string>& clientQueue, std::vector<cv::String>& clientResponseSplit, short& clientResponseCode);
-	short _ConsumeImageDataFromClientQueue(std::queue<string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
+	short ConsumeAndValidateClientMsgFromQueue(std::queue<string>& clientQueue, std::vector<cv::String>& clientResponseSplit, short& clientResponseCode);
+	short ConsumeImageDataFromClientQueue(std::queue<string>& clientQueue, std::map<u_short, std::string>& imagePayloadSeqMap,
 		const u_short& expectedNumberOfPayloads, const sockaddr_in& clientAddress, long& imageBytesLeftToReceive);
-	
-
-	/*void processImageProcessingReq(char* receivedImageSizeData, const sockaddr_in clientAddress);
-	const Mat constructImageFromData(const char* imageData, const cv::Size& imageDimensions);
-	const Mat constructImageFromData(map<u_short, string> imageDataMap, const cv::Size& imageDimensions);*/
 
 public:
 	UDPServer();
@@ -77,6 +72,5 @@ public:
 	
 	short StartReceivingClientMsgs();
 	bool IsValid();
-	//short receiveImage(const cv::Size& imageDimensions, const sockaddr_in& clientAddress);
 };
 

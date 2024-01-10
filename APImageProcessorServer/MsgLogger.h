@@ -12,14 +12,14 @@ using std::string;
 /*
 This class is responsible for logging messages to an external log file.
 It is built on the singleton pattern, so only one instance of the class
-is in memory at any given time during program execution.
+is present in memory at any given time during program execution.
 */
 class MsgLogger
 {
 private:
-	static MsgLogger* _loggerInstance;
-	mutex _mtx;
-	ofstream _logFile;
+	static MsgLogger* logger_instance_;
+	mutex mtx_;
+	ofstream log_file_;
 
 	MsgLogger();
 

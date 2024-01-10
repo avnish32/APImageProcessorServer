@@ -3,63 +3,63 @@
   <Class Name="ImageMetadataProcessor">
     <Position X="18.5" Y="4.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAIAAAIIAAAAAAgAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAIBAAAAAAgAAAAgA=</HashCode>
       <FileName>ImageMetadataProcessor.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ImageProcessor">
     <Position X="22.25" Y="4.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAgIAAQAAQAAAAQIAAAAAAQAAAABA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAgIAAQAAQEAAAABAAAAAAQAAAABA=</HashCode>
       <FileName>ImageProcessor.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MsgLogger">
     <Position X="20" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAICABAAAAAAAAAAAAAAAAJAABAAAABABCAAAAAAA=</HashCode>
+      <HashCode>AAEAACABAAAAAAAAAAAAAAAAJAABAAAAAAACAgAAEAA=</HashCode>
       <FileName>MsgLogger.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ThreadPool">
     <Position X="17.75" Y="7.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAgAAAACAAAAAAAAAAAAAAAAAAAAAIIABABAAAABSAA=</HashCode>
+      <HashCode>AABAAAACAAAAAAAAAAAAAAAAAAAEABgAAABCAAAAEgg=</HashCode>
       <FileName>ThreadPool.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="UDPServer">
     <Position X="21.75" Y="7.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>EBAACEAAAAAACADDDAgAAAgAgABAIYgAIABSYAAABEA=</HashCode>
+      <HashCode>AACAAAAAAAAQAIiBEAgAAAAgABDADBCKEAAQEEACMAE=</HashCode>
       <FileName>UDPServer.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BrightnessAdjuster">
     <Position X="3.5" Y="4.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAAAAAAAAAAQAAAAABAAAAAAgAAAAAAEAA=</HashCode>
+      <HashCode>AAAAAAAAAACAAAAAAAAAQAAAAABAAAAAAgAAAAAQAAA=</HashCode>
       <FileName>BrightnessAdjuster.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Cropper">
     <Position X="8.5" Y="4.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAIAgAAQAAAAAIAAAAAAAAAABgAAEA=</HashCode>
+      <HashCode>AgAAAAAAAAAAAAAIQAAAQAAAAAIAAAAAAAAAAAAAgBA=</HashCode>
       <FileName>Cropper.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Flipper">
     <Position X="13.25" Y="4.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>gAAAAAgAAEAQAAAAAAAAQAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAEAQAAAAAAAAQAAAAAAAARgAAAAAAAAAAAA=</HashCode>
       <FileName>Flipper.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ImageFilter">
     <Position X="7" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAABAAAAAAAAAAAAA=</HashCode>
       <FileName>ImageFilter.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -73,7 +73,7 @@
   <Class Name="Resizer">
     <Position X="1.25" Y="4.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAAAAkAAQAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <HashCode>AACAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAAAAAAAAgBA=</HashCode>
       <FileName>Resizer.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -87,7 +87,7 @@
   <Class Name="Rotator">
     <Position X="10.75" Y="4.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQgABAAAAAAAAAQAAAAAAgAAAAAAAIAAAAAEI=</HashCode>
+      <HashCode>AAAAAAASAABAAAAAAAAAQAAAAAACAAAgAkAAAAAAAAA=</HashCode>
       <FileName>Rotator.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -101,14 +101,14 @@
   <Class Name="CropFilterParamsValidator">
     <Position X="1" Y="11.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ABABAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>CropFilterParamsValidator.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FilterParamsValidator">
     <Position X="5.75" Y="8.25" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAABAQgAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAFAQAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
       <FileName>FilterParamsValidator.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -150,7 +150,7 @@
   <Class Name="ImageConstructor">
     <Position X="5.25" Y="14" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAAAAgAAAAAAAAAAAAABAAIAAAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAEAAQIAAAAAAAAAAAAAAAAAABAAJAAAAAAAAAAAAA=</HashCode>
       <FileName>ImageConstructor.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -182,7 +182,7 @@
       <FileName>TwoChannelImageConstructor.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Typedef Name="ushort" Collapsed="true">
+  <Typedef Name="u_short" Collapsed="true">
     <Position X="20.5" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

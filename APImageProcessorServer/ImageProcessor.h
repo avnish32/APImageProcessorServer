@@ -19,8 +19,8 @@ This class handles various tasks related to the processing of image.
 class ImageProcessor
 {
 private:
-	Mat _image;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	Mat image_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
 public:
 	ImageProcessor();

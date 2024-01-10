@@ -9,13 +9,13 @@ FilterParamsValidator::FilterParamsValidator()
 
 FilterParamsValidator::FilterParamsValidator(const vector<float>& filterParams)
 {
-	_filterParams = filterParams;
+	filter_params_ = filterParams;
 }
 
 FilterParamsValidator::FilterParamsValidator(const vector<float>& filterParams, const cv::Size& imageDimensions)
 {
-	_filterParams = filterParams;
-	_imageDimensions = imageDimensions;
+	filter_params_ = filterParams;
+	image_dimensions_ = imageDimensions;
 }
 
 bool FilterParamsValidator::ValidateFilterParams()

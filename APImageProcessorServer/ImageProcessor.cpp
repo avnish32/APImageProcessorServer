@@ -13,13 +13,13 @@ using std::to_string;
 
 ImageProcessor::ImageProcessor()
 {
-	_msgLogger->LogDebug("Image processor default constructor.");
-	_image = Mat(1, 1, CV_8UC1);
+	msg_logger_->LogDebug("Image processor default constructor.");
+	image_ = Mat(1, 1, CV_8UC1);
 }
 
 ImageProcessor::ImageProcessor(Mat image)
 {
-	_image = image;
+	image_ = image;
 }
 
 /*
@@ -29,26 +29,26 @@ ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, co
 {
 	short numOfChannels = imageFileSize / (imageDimensions.width * imageDimensions.height);
 	
-	_msgLogger->LogDebug("Inside ImageProcessor. Number of channels: " + to_string(numOfChannels));
+	msg_logger_->LogDebug("Inside ImageProcessor. Number of channels: " + to_string(numOfChannels));
 
 	ImageConstructor* imageConstructor = ImageConstructorFactory::GetImageConstructor(numOfChannels, imageDataMap, imageDimensions);
 	if (imageConstructor == nullptr) {
-		_msgLogger->LogError("ERROR: Constructing image with " + to_string(numOfChannels) + "is currently not supported.");
+		msg_logger_->LogError("ERROR: Constructing image with " + to_string(numOfChannels) + "is currently not supported.");
 		return;
 	}
 	
-	_image = imageConstructor->ConstructImage();
+	image_ = imageConstructor->ConstructImage();
 }
 
 ImageProcessor::~ImageProcessor()
 {
-	_msgLogger->LogDebug("Image processor destructor.");
+	msg_logger_->LogDebug("Image processor destructor.");
 }
 
 void ImageProcessor::DisplayImage(cv::String windowName)
 {
 	cv::namedWindow(windowName, cv::WINDOW_KEEPRATIO);
-	imshow(windowName, _image);
+	imshow(windowName, image_);
 
 	cv::waitKey(0);
 	cv::destroyWindow(windowName);
@@ -61,30 +61,30 @@ the resultant image after applying the filter.
 Mat ImageProcessor::ApplyFilter(ImageFilterTypesEnum filterType, vector<float> filterParams)
 {
 	ImageFilter* imageFilter = ImageFilterFactory::GetImageFilter(filterType, filterParams);
-	return imageFilter->ApplyFilter(_image);
+	return imageFilter->ApplyFilter(image_);
 }
 
 void ImageProcessor::SaveImage(cv::String saveAddress)
 {
-	bool wasImageWritten = imwrite(saveAddress, _image);
+	bool wasImageWritten = imwrite(saveAddress, image_);
 	if (!wasImageWritten) {
-		_msgLogger->LogError("ERROR: Image could not be written to file.");
+		msg_logger_->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	_msgLogger->LogDebug("Image written to file successfully.");
+	msg_logger_->LogDebug("Image written to file successfully.");
 }
 
 void ImageProcessor::SaveImage(Mat imageToSave, cv::String saveAddress)
 {
 	bool wasImageWritten = imwrite(saveAddress, imageToSave);
 	if (!wasImageWritten) {
-		_msgLogger->LogError("ERROR: Image could not be written to file.");
+		msg_logger_->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	_msgLogger->LogDebug("Image written to file successfully.");
+	msg_logger_->LogDebug("Image written to file successfully.");
 }
 
 Mat ImageProcessor::GetImage()
 {
-	return _image;
+	return image_;
 }

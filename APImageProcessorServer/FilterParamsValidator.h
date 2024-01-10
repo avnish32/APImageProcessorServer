@@ -16,9 +16,9 @@ each filter that the application supports.
 class FilterParamsValidator
 {
 protected:
-	vector<float> _filterParams;
-	Size _imageDimensions;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	vector<float> filter_params_;
+	Size image_dimensions_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
 public:
 	FilterParamsValidator();

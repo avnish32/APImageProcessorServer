@@ -2,7 +2,7 @@
 
 #include "MsgLogger.h"
 
-typedef unsigned short ushort;
+typedef unsigned short u_short;
 
 using cv::Mat;
 
@@ -15,7 +15,7 @@ Its children contain the filter application logic for their respective filters.
 class ImageFilter
 {
 protected:
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 public:
 	virtual Mat ApplyFilter(const Mat& sourceImage) = 0;
 };

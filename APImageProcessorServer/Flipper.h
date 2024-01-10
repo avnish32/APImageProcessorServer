@@ -6,10 +6,10 @@ class Flipper : public ImageFilter
 {
 	//Params reqd in payload: Flip direction - horizontal/vertical
 private:
-	FlipDirection _flipDirection;
+	FlipDirection flip_direction_;
 
-	Mat _FlipHorizontally(const Mat& sourceImage);
-	Mat _FlipVertically(const Mat& sourceImage);
+	Mat FlipHorizontally(const Mat& sourceImage);
+	Mat FlipVertically(const Mat& sourceImage);
 
 public:
 	Flipper();

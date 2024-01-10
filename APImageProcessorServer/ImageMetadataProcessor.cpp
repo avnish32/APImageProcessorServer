@@ -12,12 +12,12 @@ using std::to_string;
 
 ImageMetadataProcessor::ImageMetadataProcessor(vector<string> imageMetadataStringVector)
 {
-	_imageMetadataVector = imageMetadataStringVector;
+	image_metadata_vector_ = imageMetadataStringVector;
 }
 
 ImageMetadataProcessor::~ImageMetadataProcessor()
 {
-	_msgLogger->LogDebug("ImageMetadataProcessor destroyed.");
+	msg_logger_->LogDebug("ImageMetadataProcessor destroyed.");
 }
 
 /*
@@ -30,31 +30,31 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 	ImageFilterTypesEnum& filterTypeEnum, vector<float>& filterParams)
 {
 	//Sample payload: SIZE 1024 768 2359296 1 800 600
-	if (_imageMetadataVector.size() < MIN_IMAGE_METADATA_PARAMS) {
-		_msgLogger->LogError("ERROR: Too few parameters in image metadata.");
+	if (image_metadata_vector_.size() < MIN_IMAGE_METADATA_PARAMS) {
+		msg_logger_->LogError("ERROR: Too few parameters in image metadata.");
 		return RESPONSE_FAILURE;
 	}
 
-	if (_imageMetadataVector.at(0) != SIZE_PAYLOAD_KEY) {
-		_msgLogger->LogError("ERROR: Client sent image meta data in wrong format.");
+	if (image_metadata_vector_.at(0) != SIZE_PAYLOAD_KEY) {
+		msg_logger_->LogError("ERROR: Client sent image meta data in wrong format.");
 		return RESPONSE_FAILURE;
 	}
 	try {
-		imageDimensions = cv::Size(stoi(_imageMetadataVector.at(1)), stoi(_imageMetadataVector.at(2)));
-		imageFileSize = stoi(_imageMetadataVector.at(3));		
+		imageDimensions = cv::Size(stoi(image_metadata_vector_.at(1)), stoi(image_metadata_vector_.at(2)));
+		imageFileSize = stoi(image_metadata_vector_.at(3));		
 
-		if (_imageMetadataVector.size() > MIN_IMAGE_METADATA_PARAMS) {
-			for (int i = 5; i < _imageMetadataVector.size(); i++) {
-				filterParams.push_back(stof(_imageMetadataVector.at(i)));
+		if (image_metadata_vector_.size() > MIN_IMAGE_METADATA_PARAMS) {
+			for (int i = 5; i < image_metadata_vector_.size(); i++) {
+				filterParams.push_back(stof(image_metadata_vector_.at(i)));
 			}
 		}
 	}
 	catch (std::invalid_argument iaExp) {
-		_msgLogger->LogError("ERROR: Invalid image size/filter values received.");
+		msg_logger_->LogError("ERROR: Invalid image size/filter values received.");
 		return RESPONSE_FAILURE;
 	}
 
-	filterTypeEnum = (ImageFilterTypesEnum)(stoi(_imageMetadataVector.at(4)));
+	filterTypeEnum = (ImageFilterTypesEnum)(stoi(image_metadata_vector_.at(4)));
 	switch (filterTypeEnum) {
 	case BRIGHTNESS_ADJ:
 	case CROP:
@@ -64,7 +64,7 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 	case RGB_TO_GRAYSCALE:
 		break;
 	default:
-		_msgLogger->LogError("ERROR: Invalid filter type received: "+to_string(filterTypeEnum));
+		msg_logger_->LogError("ERROR: Invalid filter type received: "+to_string(filterTypeEnum));
 		return RESPONSE_FAILURE;
 	}
 
@@ -72,7 +72,7 @@ short ImageMetadataProcessor::ValidateImageMetadata(cv::Size& imageDimensions, u
 		filterParams, imageDimensions);
 
 	if (filterParamsValidator == nullptr || !filterParamsValidator->ValidateFilterParams()) {
-		_msgLogger->LogError("ERROR: Filter parameter validation failed.");
+		msg_logger_->LogError("ERROR: Filter parameter validation failed.");
 		delete filterParamsValidator;
 		return RESPONSE_FAILURE;
 	}

@@ -7,7 +7,7 @@ using std::to_string;
 
 using cv::Vec3b;
 
-float BrightnessAdjuster::_clampPixelValue(float unClampedValue, const float minValue, const float maxValue)
+float BrightnessAdjuster::ClampPixelValue(float unClampedValue, const float minValue, const float maxValue)
 {
 	if (unClampedValue < minValue) {
 		return minValue;
@@ -22,17 +22,17 @@ float BrightnessAdjuster::_clampPixelValue(float unClampedValue, const float min
 
 BrightnessAdjuster::BrightnessAdjuster()
 {
-	_brightnessAdjFactor = 1;
+	brightness_adj_factor_ = 1;
 }
 
 BrightnessAdjuster::BrightnessAdjuster(const float& brightnessAdjFactor)
 {
-	_brightnessAdjFactor = brightnessAdjFactor;
+	brightness_adj_factor_ = brightnessAdjFactor;
 }
 
 BrightnessAdjuster::~BrightnessAdjuster()
 {
-	_msgLogger->LogDebug("Destroying BrightnessAdjuster.");
+	msg_logger_->LogDebug("Destroying BrightnessAdjuster.");
 }
 
 /*
@@ -42,7 +42,7 @@ then clamping the value between 0 and 255.
 */
 Mat BrightnessAdjuster::ApplyFilter(const Mat& sourceImage)
 {
-	_msgLogger->LogError("Adjusting brightness. Adjustment factor: " + to_string(_brightnessAdjFactor));
+	msg_logger_->LogError("Adjusting brightness. Adjustment factor: " + to_string(brightness_adj_factor_));
 
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
 
@@ -53,9 +53,9 @@ Mat BrightnessAdjuster::ApplyFilter(const Mat& sourceImage)
 	//Below formulae to adjust brightness taken from https://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/image-processing-algorithms-part-4-brightness-adjustment/
 	for (int i = 0; i < sourceImage.rows; i++) {
 		for (int j = 0; j < sourceImage.cols; j++) {
-			uchar red = round(_clampPixelValue(sourceBGRChannels[2].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
-			uchar green = round(_clampPixelValue(sourceBGRChannels[1].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
-			uchar blue = round(_clampPixelValue(sourceBGRChannels[0].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
+			uchar red = round(ClampPixelValue(sourceBGRChannels[2].at<uchar>(i, j) * brightness_adj_factor_, 0.0f, 255.0f));
+			uchar green = round(ClampPixelValue(sourceBGRChannels[1].at<uchar>(i, j) * brightness_adj_factor_, 0.0f, 255.0f));
+			uchar blue = round(ClampPixelValue(sourceBGRChannels[0].at<uchar>(i, j) * brightness_adj_factor_, 0.0f, 255.0f));
 			
 			targetImage.at<Vec3b>(i, j) = Vec3b(blue, green, red);
 		}

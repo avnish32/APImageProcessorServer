@@ -4,11 +4,11 @@
 class Resizer : public ImageFilter
 {
 private:
-	ushort _targetWidth, _targetHeight;
+	u_short target_width_, target_height_;
 
 public:
 	Resizer();
-	Resizer(const ushort& targetWidth, const ushort& targetHeight);
+	Resizer(const u_short& targetWidth, const u_short& targetHeight);
 	~Resizer();
 	Mat ApplyFilter(const Mat& sourceImage) override;
 };

@@ -8,7 +8,7 @@
 using std::to_string;
 using std::unique_lock;
 
-typedef unsigned short ushort;
+typedef unsigned short u_short;
 
 /*
 This function initializes the thread pool with numOfThreads threads.
@@ -18,33 +18,33 @@ waiting state again until another task is pushed, or the thread pool is stopped,
  whichever occurs earlier. 
  The thread behaviour is defined using an internal lambda function.
 */
-void ThreadPool::init(int numThreads)
+void ThreadPool::Init(int numThreads)
 {
 	auto executeThreadLambda = [this]() {
 		while (true) {
 			function<void()> task;
 			{
-				unique_lock<mutex> lock(_mtx);
+				unique_lock<mutex> lock(mtx_);
 				
-				_msgLogger->LogDebug("Acquired lock. Releasing and waiting to be notified...");
+				msg_logger_->LogDebug("Acquired lock. Releasing and waiting to be notified...");
 
-				_cv.wait(lock, [this]() {
-					return _isThreadPoolStopped || !_tasks.empty();
+				cv_.wait(lock, [this]() {
+					return is_thread_pool_stopped_ || !tasks_.empty();
 					});
 
-				_msgLogger->LogDebug("Received notification.");
+				msg_logger_->LogDebug("Received notification.");
 
-				if (!_tasks.empty()) {
+				if (!tasks_.empty()) {
 					
-					_msgLogger->LogDebug("Tasks are pending. Picking a task...");
+					msg_logger_->LogDebug("Tasks are pending. Picking a task...");
 
-					task = _tasks.front();
-					_tasks.pop();
+					task = tasks_.front();
+					tasks_.pop();
 
-					_msgLogger->LogDebug("Picked a task. Task queue size: " + to_string(ushort(_tasks.size())));
+					msg_logger_->LogDebug("Picked a task. Task queue size: " + to_string(u_short(tasks_.size())));
 				}
-				else if (_isThreadPoolStopped) {
-					_msgLogger->LogDebug("Pool stopped and all tasks completed. Exiting.");
+				else if (is_thread_pool_stopped_) {
+					msg_logger_->LogDebug("Pool stopped and all tasks completed. Exiting.");
 					return;
 				}
 			}
@@ -53,13 +53,13 @@ void ThreadPool::init(int numThreads)
 		};
 
 	for (int i = 0; i < numThreads; i++) {
-		_workerThreads.push_back(thread(executeThreadLambda));
+		worker_threads_.push_back(thread(executeThreadLambda));
 	}
 }
 
 ThreadPool::ThreadPool(int numThreads)
 {
-	init(numThreads);
+	Init(numThreads);
 }
 
 /*
@@ -70,16 +70,16 @@ execution before the application terminates.
 */
 ThreadPool::~ThreadPool()
 {
-	_msgLogger->LogDebug("Thread pool destructor called.");
+	msg_logger_->LogDebug("Thread pool destructor called.");
 
 	{
-		unique_lock<mutex> lock(_mtx);
-		_isThreadPoolStopped = true;
-		_cv.notify_all();
-		_msgLogger->LogDebug("Thread pool stopped. All threads notified.");
+		unique_lock<mutex> lock(mtx_);
+		is_thread_pool_stopped_ = true;
+		cv_.notify_all();
+		msg_logger_->LogDebug("Thread pool stopped. All threads notified.");
 	}
 
-	for (thread &t : _workerThreads) {
+	for (thread &t : worker_threads_) {
 		t.join();
 	}
 }

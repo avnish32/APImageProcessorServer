@@ -12,7 +12,7 @@ This formula was referred from https://www.baeldung.com/cs/convert-rgb-to-graysc
 */
 Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& sourceImage)
 {
-	_msgLogger->LogError("Converting from RGB to Grayscale.");
+	msg_logger_->LogError("Converting from RGB to Grayscale.");
 
 	//Initialize target image. Since this is a grayscale image, target need have only one channel
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), CV_8UC1);

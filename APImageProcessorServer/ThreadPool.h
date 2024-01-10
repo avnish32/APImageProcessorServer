@@ -26,24 +26,22 @@ using std::queue;
 class ThreadPool
 {
 private:
-	vector<thread> _workerThreads;
-	queue <function<void()>> _tasks;
-	mutex _mtx;
-	condition_variable _cv;
-	bool _isThreadPoolStopped = false;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	vector<thread> worker_threads_;
+	queue <function<void()>> tasks_;
+	mutex mtx_;
+	condition_variable cv_;
+	bool is_thread_pool_stopped_ = false;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	void init(int numThreads);
+	void Init(int numThreads);
 
 public:
 	ThreadPool() = default;
 	ThreadPool(int numThreads);
 	~ThreadPool();
 
-	//void operator() (int numThreads);
-
 	template<typename F, typename ...Args>
-	future <invoke_result_t<F, Args...>> enqueue(F&& fn, Args&& ...args);
+	future <invoke_result_t<F, Args...>> Enqueue(F&& fn, Args&& ...args);
 
 };
 
@@ -51,7 +49,7 @@ public:
 This function enqueues the task fn and its arguments args... into the task queue and notifies a thread.
 */
 template<typename F, typename ...Args>
-inline future<invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& fn, Args&& ...args)
+inline future<invoke_result_t<F, Args...>> ThreadPool::Enqueue(F&& fn, Args&& ...args)
 {
 	//Wrapping the user submitted task F and its arguments Args into a function with no arguments
 	//and void return type as the task queue is made up of generalized functions that do not take
@@ -70,13 +68,13 @@ inline future<invoke_result_t<F, Args...>> ThreadPool::enqueue(F&& fn, Args&& ..
 	auto taskSharedPtr = make_shared<packaged_task<return_type()>>(move(packagedTask));
 
 	{
-		unique_lock<mutex> lock(_mtx);
+		unique_lock<mutex> lock(mtx_);
 		//Using a lambda function to convert the packaged task into a function that does not return anything.
-		_tasks.push([taskSharedPtr]() -> void {
+		tasks_.push([taskSharedPtr]() -> void {
 			(*taskSharedPtr)();
 			});
 		//Notifying one thread that a new task has been pushed into the queue.
-		_cv.notify_one();
+		cv_.notify_one();
 	}
 
 	//Returning the future of the task so that its return value can be accessed

@@ -5,7 +5,7 @@ using cv::Vec3b;
 /*
 This method flips the sourceImage horizontally by interchanging pixel values column-wise.
 */
-Mat Flipper::_FlipHorizontally(const Mat& sourceImage)
+Mat Flipper::FlipHorizontally(const Mat& sourceImage)
 {
 	//Initialize target image
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
@@ -22,7 +22,7 @@ Mat Flipper::_FlipHorizontally(const Mat& sourceImage)
 /*
 This method flips the sourceImage vertically by interchanging the pixel values row-wise.
 */
-Mat Flipper::_FlipVertically(const Mat& sourceImage)
+Mat Flipper::FlipVertically(const Mat& sourceImage)
 {
 	//Initialize target image
 	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), sourceImage.type());
@@ -38,27 +38,27 @@ Mat Flipper::_FlipVertically(const Mat& sourceImage)
 
 Flipper::Flipper()
 {
-	_flipDirection = HORIZONTAL;
+	flip_direction_ = HORIZONTAL;
 }
 
 Flipper::Flipper(const FlipDirection& flipDirection)
 {
-	_flipDirection = flipDirection;
+	flip_direction_ = flipDirection;
 }
 
 Flipper::~Flipper()
 {
-	_msgLogger->LogDebug("Destroying Flipper object.");
+	msg_logger_->LogDebug("Destroying Flipper object.");
 }
 
 Mat Flipper::ApplyFilter(const Mat& sourceImage)
 {
-	_msgLogger->LogError("Flipping image. Flip direction: " + _flipDirection);
+	msg_logger_->LogError("Flipping image. Flip direction: " + flip_direction_);
 
-	switch (_flipDirection) {
+	switch (flip_direction_) {
 	case VERTICAL:
-		return _FlipVertically(sourceImage);
+		return FlipVertically(sourceImage);
 	default:
-		return _FlipHorizontally(sourceImage);
+		return FlipHorizontally(sourceImage);
 	}
 }

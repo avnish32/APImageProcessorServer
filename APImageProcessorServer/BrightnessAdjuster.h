@@ -4,9 +4,10 @@ class BrightnessAdjuster : public ImageFilter
 {
 	//Params reqd in payload: Float brightness adjustment factor from 0 to ...
 private:
-	float _brightnessAdjFactor;
+	float brightness_adj_factor_;
 
-	float _clampPixelValue(float unClampedValue, const float minValue, const float maxValue);
+	float ClampPixelValue(float unClampedValue, const float minValue, const float maxValue);
+
 public:
 	BrightnessAdjuster();
 	BrightnessAdjuster(const float& brightnessAdjFactor);

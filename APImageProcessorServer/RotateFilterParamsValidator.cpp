@@ -13,8 +13,8 @@ RotateFilterParamsValidator::RotateFilterParamsValidator(const vector<float>& fi
 
 bool RotateFilterParamsValidator::ValidateFilterParams()
 {
-	short direction = _filterParams.at(0);
-	short numOfTurns = _filterParams.at(1);
+	short direction = filter_params_.at(0);
+	short numOfTurns = filter_params_.at(1);
 
 	RotationDirection rotationDirection = (RotationDirection)direction;
 
@@ -23,12 +23,12 @@ bool RotateFilterParamsValidator::ValidateFilterParams()
 	case ANTI_CLOCKWISE:
 		break;
 	default:
-		_msgLogger->LogError("ERROR: Invalid direction given for rotation: "+to_string(rotationDirection));
+		msg_logger_->LogError("ERROR: Invalid direction given for rotation: "+to_string(rotationDirection));
 		return false;
 	}
 
 	if (numOfTurns < 0) {
-		_msgLogger->LogError("ERROR: Invalid number of turns given for rotation: "+to_string(numOfTurns));
+		msg_logger_->LogError("ERROR: Invalid number of turns given for rotation: "+to_string(numOfTurns));
 		return false;
 	}
 

@@ -13,25 +13,25 @@ CropFilterParamsValidator::CropFilterParamsValidator(const vector<float>& filter
 
 bool CropFilterParamsValidator::ValidateFilterParams()
 {
-	short cropTopLeftCornerX = _filterParams.at(0);
-	short cropTopLeftCornerY = _filterParams.at(1);
-	short targetWidth = _filterParams.at(2);
-	short targetHeight = _filterParams.at(3);
+	short cropTopLeftCornerX = filter_params_.at(0);
+	short cropTopLeftCornerY = filter_params_.at(1);
+	short targetWidth = filter_params_.at(2);
+	short targetHeight = filter_params_.at(3);
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		_msgLogger->LogError("ERROR: Invalid values for CROP filter parameters.");
+		msg_logger_->LogError("ERROR: Invalid values for CROP filter parameters.");
 		return false;
 	}
 
-	if (_IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
-		_msgLogger->LogError("ERROR: Given coordinate lies outside the image.");
+	if (IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
+		msg_logger_->LogError("ERROR: Given coordinate lies outside the image.");
 		return false;
 	}
 
 	return true;
 }
 
-bool CropFilterParamsValidator::_IsCoordinateOutsideImage(short x, short y)
+bool CropFilterParamsValidator::IsCoordinateOutsideImage(short x, short y)
 {
-	return x < 0 || y < 0 || x > _imageDimensions.width || y > _imageDimensions.height;
+	return x < 0 || y < 0 || x > image_dimensions_.width || y > image_dimensions_.height;
 }

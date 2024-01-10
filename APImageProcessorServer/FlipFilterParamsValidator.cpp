@@ -12,7 +12,7 @@ FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<float>& filter
 
 bool FlipFilterParamsValidator::ValidateFilterParams()
 {
-	short direction = _filterParams.at(0);
+	short direction = filter_params_.at(0);
 	FlipDirection flipDirection = (FlipDirection)direction;
 
 	switch (flipDirection) {
@@ -20,7 +20,7 @@ bool FlipFilterParamsValidator::ValidateFilterParams()
 	case VERTICAL:
 		break;
 	default:
-		_msgLogger->LogError("ERROR: Invalid direction given for flipping.");
+		msg_logger_->LogError("ERROR: Invalid direction given for flipping.");
 		return false;
 	}
 	return true;

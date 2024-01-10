@@ -10,7 +10,7 @@
 
 using std::cout;
 
-MsgLogger* MsgLogger::_loggerInstance = nullptr;
+MsgLogger* MsgLogger::logger_instance_ = nullptr;
 
 int main()
 {
