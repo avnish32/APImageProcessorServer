@@ -9,7 +9,6 @@
 
 #include "MsgLogger.h"
 
-//using namespace std;
 using std::thread;
 using std::function;
 using std::condition_variable;
@@ -33,15 +32,15 @@ private:
 	bool is_thread_pool_stopped_ = false;
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	void Init(int numThreads);
+	void Init(int);
 
 public:
 	ThreadPool() = default;
-	ThreadPool(int numThreads);
+	ThreadPool(int);
 	~ThreadPool();
 
 	template<typename F, typename ...Args>
-	future <invoke_result_t<F, Args...>> Enqueue(F&& fn, Args&& ...args);
+	future <invoke_result_t<F, Args...>> Enqueue(F&&, Args&&...);
 
 };
 

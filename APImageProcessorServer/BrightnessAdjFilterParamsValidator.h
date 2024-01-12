@@ -3,6 +3,6 @@
 class BrightnessAdjFilterParamsValidator : public FilterParamsValidator
 {
 public:
-    BrightnessAdjFilterParamsValidator(const vector<float>& filterParams);
+    BrightnessAdjFilterParamsValidator(const vector<float>&);
     bool ValidateFilterParams();
 };

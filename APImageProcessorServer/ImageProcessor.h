@@ -24,16 +24,16 @@ private:
 
 public:
 	ImageProcessor();
-	ImageProcessor(Mat image);
-	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize);
+	ImageProcessor(Mat);
+	ImageProcessor(map<unsigned short, std::string>, const Size&, const uint&);
 	~ImageProcessor();
 
-	void DisplayImage(cv::String windowName);
+	void DisplayImage(cv::String);
 
-	Mat ApplyFilter(ImageFilterTypesEnum filterType, vector<float> filterParams);
+	Mat ApplyFilter(ImageFilterTypesEnum, vector<float>);
 
-	void SaveImage(cv::String saveAddress);
-	void SaveImage(Mat imageToSave, cv::String saveAddress);
+	void SaveImage(cv::String);
+	void SaveImage(Mat, cv::String);
 
 	Mat GetImage();
 };

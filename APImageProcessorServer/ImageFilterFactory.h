@@ -14,6 +14,5 @@ It instantiates an ImageFilter object depending on the type of the filter it rec
 class ImageFilterFactory
 {
 public:
-	static ImageFilter* GetImageFilter(const ImageFilterTypesEnum& filterType,
-		const std::vector<float>& filterParams);
+	static ImageFilter* GetImageFilter(const ImageFilterTypesEnum&, const std::vector<float>&);
 };

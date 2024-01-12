@@ -13,24 +13,24 @@
 This function checks filterType and instantiates an object of the corresponding concrete derived class of ImageFilter
 with filterParams.
 */
-ImageFilter* ImageFilterFactory::GetImageFilter(const ImageFilterTypesEnum& filterType, const std::vector<float>& filterParams)
+ImageFilter* ImageFilterFactory::GetImageFilter(const ImageFilterTypesEnum& filter_type, const std::vector<float>& filter_params)
 {
     MsgLogger* _msgLogger = MsgLogger::GetInstance();
-    _msgLogger->LogDebug("Inside image filter factory. Filter type: " + std::to_string(filterType));
+    _msgLogger->LogDebug("Inside image filter factory. Filter type: " + std::to_string(filter_type));
 
-    switch (filterType) {
+    switch (filter_type) {
     case NONE:
         return nullptr;
     case BRIGHTNESS_ADJ:
-        return new BrightnessAdjuster(filterParams.at(0));
+        return new BrightnessAdjuster(filter_params.at(0));
     case CROP:
-        return new Cropper(filterParams.at(0), filterParams.at(1), filterParams.at(2), filterParams.at(3));
+        return new Cropper(filter_params.at(0), filter_params.at(1), filter_params.at(2), filter_params.at(3));
     case FLIP:
-        return new Flipper((FlipDirection)(filterParams.at(0)));
+        return new Flipper((FlipDirection)(filter_params.at(0)));
     case RESIZE:
-        return new Resizer(filterParams.at(0), filterParams.at(1));
+        return new Resizer(filter_params.at(0), filter_params.at(1));
     case ROTATE:
-        return new Rotator((RotationDirection)filterParams.at(0), filterParams.at(1));
+        return new Rotator((RotationDirection)filter_params.at(0), filter_params.at(1));
     case RGB_TO_GRAYSCALE:
         return new RGBToGrayscaleConverter();
     default:

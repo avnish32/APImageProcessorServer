@@ -7,15 +7,15 @@ FilterParamsValidator::FilterParamsValidator()
 {
 }
 
-FilterParamsValidator::FilterParamsValidator(const vector<float>& filterParams)
+FilterParamsValidator::FilterParamsValidator(const vector<float>& filter_params)
 {
-	filter_params_ = filterParams;
+	filter_params_ = filter_params;
 }
 
-FilterParamsValidator::FilterParamsValidator(const vector<float>& filterParams, const cv::Size& imageDimensions)
+FilterParamsValidator::FilterParamsValidator(const vector<float>& filter_params, const cv::Size& image_dimensions)
 {
-	filter_params_ = filterParams;
-	image_dimensions_ = imageDimensions;
+	filter_params_ = filter_params;
+	image_dimensions_ = image_dimensions;
 }
 
 bool FilterParamsValidator::ValidateFilterParams()

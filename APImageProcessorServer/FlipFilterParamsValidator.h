@@ -3,6 +3,6 @@
 class FlipFilterParamsValidator : public FilterParamsValidator
 {
 public:
-	FlipFilterParamsValidator(const vector<float>& filterParams);
+	FlipFilterParamsValidator(const vector<float>&);
 	bool ValidateFilterParams();
 };

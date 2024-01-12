@@ -9,14 +9,14 @@ private:
 	RotationDirection direction_;
 	u_short num_of_turns_;
 
-	Mat RotateClockwiseOnce(const Mat& sourceImage);
-	Mat RotateAntiClockwiseOnce(const Mat& sourceImage);
-	Mat RotateTwice(const Mat& sourceImage);
+	Mat RotateClockwiseOnce(const Mat&);
+	Mat RotateAntiClockwiseOnce(const Mat&);
+	Mat RotateTwice(const Mat&);
 
 public:
 	Rotator();
-	Rotator(const RotationDirection& rotationMode, const u_short& numOfTurns);
+	Rotator(const RotationDirection&, const u_short&);
 	~Rotator();
-	Mat ApplyFilter(const Mat& sourceImage) override;
+	Mat ApplyFilter(const Mat&) override;
 };
 

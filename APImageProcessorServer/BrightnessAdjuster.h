@@ -6,12 +6,12 @@ class BrightnessAdjuster : public ImageFilter
 private:
 	float brightness_adj_factor_;
 
-	float ClampPixelValue(float unClampedValue, const float minValue, const float maxValue);
+	float ClampPixelValue(float, const float, const float);
 
 public:
 	BrightnessAdjuster();
-	BrightnessAdjuster(const float& brightnessAdjFactor);
+	BrightnessAdjuster(const float&);
 	~BrightnessAdjuster();
-	Mat ApplyFilter(const Mat& sourceImage);
+	Mat ApplyFilter(const Mat&);
 };
 

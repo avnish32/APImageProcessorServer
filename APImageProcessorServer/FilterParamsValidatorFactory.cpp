@@ -9,24 +9,24 @@
 This function checks filterType and instantiates an object of the corresponding concrete derived class of FilterParamsValidator
 with filterParams and imageDimensions.
 */
-FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(const ImageFilterTypesEnum& filterType,
-    const vector<float>& filterParams, const cv::Size& imageDimensions)
+FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(const ImageFilterTypesEnum& filter_type,
+    const vector<float>& filter_params, const cv::Size& image_dimensions)
 {
-    switch (filterType) {
+    switch (filter_type) {
 	case NONE:
 		return nullptr;
 	case RESIZE:
-		return new ResizeFilterParamsValidator(filterParams);
+		return new ResizeFilterParamsValidator(filter_params);
 	case ROTATE:
-		return new RotateFilterParamsValidator(filterParams);
+		return new RotateFilterParamsValidator(filter_params);
 	case FLIP:
-		return new FlipFilterParamsValidator(filterParams);
+		return new FlipFilterParamsValidator(filter_params);
 	case CROP:
-		return new CropFilterParamsValidator(filterParams, imageDimensions);
+		return new CropFilterParamsValidator(filter_params, image_dimensions);
 	case RGB_TO_GRAYSCALE:
 		return new FilterParamsValidator();
 	case BRIGHTNESS_ADJ:
-		return new BrightnessAdjFilterParamsValidator(filterParams);
+		return new BrightnessAdjFilterParamsValidator(filter_params);
 	default:
 		return nullptr;
     }

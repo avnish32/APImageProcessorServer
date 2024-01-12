@@ -3,8 +3,6 @@
 #include<iostream>
 #include<string>
 
-//using namespace std;
-
 using std::to_string;
 using std::unique_lock;
 
@@ -18,9 +16,9 @@ waiting state again until another task is pushed, or the thread pool is stopped,
  whichever occurs earlier. 
  The thread behaviour is defined using an internal lambda function.
 */
-void ThreadPool::Init(int numThreads)
+void ThreadPool::Init(int num_threads)
 {
-	auto executeThreadLambda = [this]() {
+	auto execute_thread_lambda = [this]() {
 		while (true) {
 			function<void()> task;
 			{
@@ -52,14 +50,14 @@ void ThreadPool::Init(int numThreads)
 		}
 		};
 
-	for (int i = 0; i < numThreads; i++) {
-		worker_threads_.push_back(thread(executeThreadLambda));
+	for (int i = 0; i < num_threads; i++) {
+		worker_threads_.push_back(thread(execute_thread_lambda));
 	}
 }
 
-ThreadPool::ThreadPool(int numThreads)
+ThreadPool::ThreadPool(int num_threads)
 {
-	Init(numThreads);
+	Init(num_threads);
 }
 
 /*
@@ -83,10 +81,3 @@ ThreadPool::~ThreadPool()
 		t.join();
 	}
 }
-
-//void ThreadPool::operator()(int numThreads)
-//{
-//	init(numThreads);
-//}
-
-

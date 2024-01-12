@@ -13,7 +13,7 @@ It instantiates a FilterParamsValidator object depending on the type of the filt
 class FilterParamsValidatorFactory
 {
 public:
-	static FilterParamsValidator* GetFilterParamsValidator(const ImageFilterTypesEnum& filterType, 
-		const vector<float>& filterParams, const cv::Size& imageDimensions);
+	static FilterParamsValidator* GetFilterParamsValidator(const ImageFilterTypesEnum& , 
+		const vector<float>&, const cv::Size&);
 };
 

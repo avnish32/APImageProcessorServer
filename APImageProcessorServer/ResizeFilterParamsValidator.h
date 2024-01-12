@@ -3,6 +3,6 @@
 class ResizeFilterParamsValidator : public FilterParamsValidator
 {
 public:
-	ResizeFilterParamsValidator(const vector<float>& filterParams);
+	ResizeFilterParamsValidator(const vector<float>&);
 	bool ValidateFilterParams();
 };

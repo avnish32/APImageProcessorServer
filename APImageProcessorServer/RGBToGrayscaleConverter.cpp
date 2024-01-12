@@ -10,25 +10,25 @@ contribution of each channel into a single channel, where the weight of each cha
 grayscale = 0.3 * R + 0.59 * G + 0.11 * B
 This formula was referred from https://www.baeldung.com/cs/convert-rgb-to-grayscale.
 */
-Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& sourceImage)
+Mat RGBToGrayscaleConverter::ApplyFilter(const Mat& source_image)
 {
 	msg_logger_->LogError("Converting from RGB to Grayscale.");
 
 	//Initialize target image. Since this is a grayscale image, target need have only one channel
-	Mat targetImage = Mat(cv::Size(sourceImage.cols, sourceImage.rows), CV_8UC1);
+	Mat target_image = Mat(cv::Size(source_image.cols, source_image.rows), CV_8UC1);
 
 	//Splitting RGB image into its constituent channels using Mat::split 
 	// https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#split
-	Mat sourceChannelsSplit[3];
-	split(sourceImage, sourceChannelsSplit);
+	Mat source_channels_split[3];
+	split(source_image, source_channels_split);
 	
-	for (int i = 0; i < sourceImage.rows; i++) {
-		for (int j = 0; j < sourceImage.cols; j++) {
+	for (int i = 0; i < source_image.rows; i++) {
+		for (int j = 0; j < source_image.cols; j++) {
 			
-			targetImage.at<uchar>(i, j) = (0.3f * sourceChannelsSplit[2].at<uchar>(i, j))
-				+ (0.59f * sourceChannelsSplit[1].at<uchar>(i, j))
-				+ (0.11f * sourceChannelsSplit[0].at<uchar>(i, j));
+			target_image.at<uchar>(i, j) = (0.3f * source_channels_split[2].at<uchar>(i, j))
+				+ (0.59f * source_channels_split[1].at<uchar>(i, j))
+				+ (0.11f * source_channels_split[0].at<uchar>(i, j));
 		}
 	}
-	return targetImage;
+	return target_image;
 }

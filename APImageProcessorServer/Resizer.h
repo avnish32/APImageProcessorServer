@@ -8,8 +8,8 @@ private:
 
 public:
 	Resizer();
-	Resizer(const u_short& targetWidth, const u_short& targetHeight);
+	Resizer(const u_short&, const u_short&);
 	~Resizer();
-	Mat ApplyFilter(const Mat& sourceImage) override;
+	Mat ApplyFilter(const Mat&) override;
 };
 

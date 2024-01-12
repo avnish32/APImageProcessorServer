@@ -5,16 +5,16 @@
 
 using std::stoi;
 
-ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<float>& filterParams) :FilterParamsValidator(filterParams)
+ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<float>& filter_params) :FilterParamsValidator(filter_params)
 {
 }
 
 bool ResizeFilterParamsValidator::ValidateFilterParams()
 {
-	int targetWidth = filter_params_.at(0);
-	int targetHeight = filter_params_.at(1);
+	int target_width = filter_params_.at(0);
+	int target_height = filter_params_.at(1);
 
-	if (targetWidth <= 0 || targetHeight <= 0) {
+	if (target_width <= 0 || target_height <= 0) {
 		msg_logger_->LogError("ERROR: Width and height of resized image cannot be zero or negative.");
 		return false;
 	}

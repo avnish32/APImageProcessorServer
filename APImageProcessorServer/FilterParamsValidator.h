@@ -22,7 +22,7 @@ protected:
 
 public:
 	FilterParamsValidator();
-	FilterParamsValidator(const vector<float>& filterParams);
-	FilterParamsValidator(const vector<float>& filterParams, const Size& imageDimensions);
+	FilterParamsValidator(const vector<float>&);
+	FilterParamsValidator(const vector<float>&, const Size&);
 	virtual bool ValidateFilterParams();
 };

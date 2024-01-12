@@ -17,5 +17,5 @@ class ImageFilter
 protected:
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 public:
-	virtual Mat ApplyFilter(const Mat& sourceImage) = 0;
+	virtual Mat ApplyFilter(const Mat&) = 0;
 };

@@ -7,64 +7,64 @@ using std::to_string;
 
 using cv::Vec3b;
 
-Mat Rotator::RotateClockwiseOnce(const Mat& sourceImage)
+Mat Rotator::RotateClockwiseOnce(const Mat& source_image)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	u_short source_width = source_image.cols;
+	u_short source_height = source_image.rows;
 
-	u_short targetWidth = sourceHeight;
-	u_short targetHeight = sourceWidth;
+	u_short target_width = source_height;
+	u_short target_height = source_width;
 
-	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), sourceImage.type());
+	Mat target_image = Mat(cv::Size(target_width, target_height), source_image.type());
 
-	for (int i = 0; i < targetHeight; i++) {
-		for (int j = 0; j < targetWidth; j++) {
-			int sourceImageRow = sourceHeight - j - 1;
-			int sourceImageCol = i;
-			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+	for (int i = 0; i < target_height; i++) {
+		for (int j = 0; j < target_width; j++) {
+			int source_image_row = source_height - j - 1;
+			int source_image_col = i;
+			target_image.at<Vec3b>(i, j) = source_image.at<Vec3b>(source_image_row, source_image_col);
 		}
 	}
 
-	return targetImage;
+	return target_image;
 }
 
-Mat Rotator::RotateAntiClockwiseOnce(const Mat& sourceImage)
+Mat Rotator::RotateAntiClockwiseOnce(const Mat& source_image)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	u_short source_width = source_image.cols;
+	u_short source_height = source_image.rows;
 
-	u_short targetWidth = sourceHeight;
-	u_short targetHeight = sourceWidth;
+	u_short target_width = source_height;
+	u_short target_height = source_width;
 
-	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), sourceImage.type());
+	Mat target_image = Mat(cv::Size(target_width, target_height), source_image.type());
 
-	for (int i = 0; i < targetHeight; i++) {
-		for (int j = 0; j < targetWidth; j++) {
-			int sourceImageRow = j;
-			int sourceImageCol = sourceWidth - i - 1;
-			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+	for (int i = 0; i < target_height; i++) {
+		for (int j = 0; j < target_width; j++) {
+			int source_image_row = j;
+			int source_image_col = source_width - i - 1;
+			target_image.at<Vec3b>(i, j) = source_image.at<Vec3b>(source_image_row, source_image_col);
 		}
 	}
 
-	return targetImage;
+	return target_image;
 }
 
-Mat Rotator::RotateTwice(const Mat& sourceImage)
+Mat Rotator::RotateTwice(const Mat& source_image)
 {
-	u_short sourceWidth = sourceImage.cols;
-	u_short sourceHeight = sourceImage.rows;
+	u_short source_width = source_image.cols;
+	u_short source_height = source_image.rows;
 
-	Mat targetImage = Mat(cv::Size(sourceWidth, sourceHeight), sourceImage.type());
+	Mat target_image = Mat(cv::Size(source_width, source_height), source_image.type());
 
-	for (int i = 0; i < sourceHeight; i++) {
-		for (int j = 0; j < sourceWidth; j++) {
-			int sourceImageRow = sourceHeight - i - 1;
-			int sourceImageCol = sourceWidth - j - 1;
-			targetImage.at<Vec3b>(i, j) = sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+	for (int i = 0; i < source_height; i++) {
+		for (int j = 0; j < source_width; j++) {
+			int source_image_row = source_height - i - 1;
+			int source_image_col = source_width - j - 1;
+			target_image.at<Vec3b>(i, j) = source_image.at<Vec3b>(source_image_row, source_image_col);
 		}
 	}
 
-	return targetImage;
+	return target_image;
 }
 
 Rotator::Rotator()
@@ -73,10 +73,10 @@ Rotator::Rotator()
 	num_of_turns_ = 0;
 }
 
-Rotator::Rotator(const RotationDirection& rotationMode, const u_short& numOfTurns)
+Rotator::Rotator(const RotationDirection& rotation_mode, const u_short& no_of_turns)
 {
-	direction_ = rotationMode;
-	num_of_turns_ = numOfTurns;
+	direction_ = rotation_mode;
+	num_of_turns_ = no_of_turns;
 }
 
 Rotator::~Rotator()
@@ -88,7 +88,7 @@ Rotator::~Rotator()
 This function determines the effective rotation based on the rotation direction
 and number of turns, and then calls the appropriate function.
 */
-Mat Rotator::ApplyFilter(const Mat& sourceImage)
+Mat Rotator::ApplyFilter(const Mat& source_image)
 {
 	msg_logger_->LogError("Rotating image. Direction: " + to_string(direction_) + " | Num of turns: " + to_string(num_of_turns_));
 
@@ -100,23 +100,23 @@ Mat Rotator::ApplyFilter(const Mat& sourceImage)
 		switch (direction_)
 		{
 		case CLOCKWISE:
-			return RotateClockwiseOnce(sourceImage);
+			return RotateClockwiseOnce(source_image);
 		default:
-			return RotateAntiClockwiseOnce(sourceImage);
+			return RotateAntiClockwiseOnce(source_image);
 		}
 	case 2:
 		//For 2 turns, direction doesn't matter.
-		return RotateTwice(sourceImage);
+		return RotateTwice(source_image);
 	case 3:
 		switch (direction_)
 		{
 		case CLOCKWISE:
-			return RotateAntiClockwiseOnce(sourceImage);
+			return RotateAntiClockwiseOnce(source_image);
 		default:
-			return RotateClockwiseOnce(sourceImage);
+			return RotateClockwiseOnce(source_image);
 		}
 	default:
-		return sourceImage;
+		return source_image;
 	}
 
 	return Mat();

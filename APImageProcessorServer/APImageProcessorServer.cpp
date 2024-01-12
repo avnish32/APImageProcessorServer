@@ -14,15 +14,15 @@ MsgLogger* MsgLogger::logger_instance_ = nullptr;
 
 int main()
 {
-    MsgLogger* msgLogger = MsgLogger::GetInstance();
+    MsgLogger* msg_logger = MsgLogger::GetInstance();
 
     cout << "Server application started.";
 
-    UDPServer udpServer;
-    if (!udpServer.IsValid()) {
-        msgLogger->LogError("Error in socket creation. Application will exit now.");
+    UDPServer udp_server;
+    if (!udp_server.IsValid()) {
+        msg_logger->LogError("Error in socket creation. Application will exit now.");
         return RESPONSE_FAILURE;
     }
     
-    short responseCode = udpServer.StartReceivingClientMsgs();
+    udp_server.StartReceivingClientMsgs();
 }

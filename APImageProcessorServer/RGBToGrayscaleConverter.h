@@ -5,6 +5,6 @@ class RGBToGrayscaleConverter : public ImageFilter
 {
 	//Params reqd: None
 public:
-	Mat ApplyFilter(const Mat& sourceImage);
+	Mat ApplyFilter(const Mat&);
 };
 
