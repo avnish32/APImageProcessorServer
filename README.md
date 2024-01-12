@@ -1,3 +1,5 @@
+Can run only on 64-bit systems.
+
 Needs OpenCV 4.8.0.
 Download 4.8.0 from here: https://opencv.org/releases/
 
@@ -12,3 +14,6 @@ Click OK.
 Click OK again.
 
 More info: https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
+
+Once OpenCV is set up, build the application. Can use Ctrl + B in Visual Studio.
+After building, run the program. Execution starts in APImageProcessorServer.cpp
