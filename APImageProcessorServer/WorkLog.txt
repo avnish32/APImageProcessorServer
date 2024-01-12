@@ -113,3 +113,5 @@ The new input format for Rotation and Flip is as below:
 02 Jan - Fixed bug where images were not displayed correctly in case of multiple threads on client.
 References:
 Regex documentation: https://en.cppreference.com/w/cpp/regex
+
+12 Jan - Changed server variable names to snake_case
