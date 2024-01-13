@@ -51,3 +51,5 @@ This is the server module of the Image Processing Application. This application 
 
    ![image](https://github.com/avnish32/APImageProcessorServer/assets/145987378/d03e7736-042c-468e-9c6e-d7d494aebca4)
 
+7. By default, the server runs on port 8080 on the local machine. Support to change this setting is not available currently.
+
