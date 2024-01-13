@@ -809,7 +809,6 @@ short UDPServer::StartReceivingClientMsgs()
 	}
 
 	//Created local thread pool so threads will be joined before UDP Server gets destroyed.
-	//TODO This invalidates the overloaded operator() of thread pool.
 	ThreadPool thread_pool(NUM_THREADS);
 	sockaddr_in* client_address = new sockaddr_in;
 

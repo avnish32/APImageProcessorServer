@@ -3,7 +3,7 @@
 
 using std::string;
 
-const short NUM_THREADS = 4;
+const short NUM_THREADS = 6;
 
 const short SERVER_DEFAULT_PORT = 8080;
 
