@@ -2,9 +2,10 @@
 This is the server module of the Image Processing Application. This application communicates with the Client module to receive an image and a filter to apply on it, and returns the image with the filter applied.
 
 ## Requirements
- - 64-bit operating system
+ - 64-bit Windows
  - OpenCV 4.8.0
  - Client companion module
+ - Visual Studio (2022 preferred)
 
 ## Configuring OpenCV 4.8.0
 
@@ -50,4 +51,6 @@ This is the server module of the Image Processing Application. This application 
 6. On successful execution, a console window like the one shown below should appear:
 
    ![image](https://github.com/avnish32/APImageProcessorServer/assets/145987378/d03e7736-042c-468e-9c6e-d7d494aebca4)
+
+7. By default, the server runs on port 8080 on the local machine. Support to change this setting is not available currently.
 
