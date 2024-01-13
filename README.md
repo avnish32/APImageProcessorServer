@@ -10,7 +10,7 @@ This is the server module of the Image Processing Application. This application 
 
 1. Download 4.8.0 from [OpenCV Releases page](https://opencv.org/releases/).
 2. Install OpenCV to the desired location.
-3. Add the OpenCV directory environment variable. Below are the steps to do this on Windows: (Add screenshots)
+3. Add the OpenCV directory environment variable. Below are the steps to do this on Windows:
   - Open Start menu, search for 'Edit the system environment variables' and click on 'Open' as shown:
 
        <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/4122d972-7555-4a4b-838e-ea73aa59ac4f" width = "500">
