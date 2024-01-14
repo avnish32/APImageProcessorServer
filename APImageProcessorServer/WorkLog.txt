@@ -115,3 +115,7 @@ References:
 Regex documentation: https://en.cppreference.com/w/cpp/regex
 
 12 Jan - Changed server variable names to snake_case
+
+13 Jan - Added Readme files
+13 Jan - Added check for number of times the receiver has found sender inactive while receiving image data. This was done as there were situations where all missing payloads from sender got lost in transit and receiver assumed that sender was inactive. Hence now the receiver will check how many times it has found the missing sequence numbers same as the last timeout. After a limit, it will terminate connection with the sender.
+13 Jan - Increased timeout durations.

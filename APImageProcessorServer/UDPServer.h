@@ -56,7 +56,7 @@ private:
 	//Functions to send data to client
 	short SendServerResponseToClient(short, const sockaddr_in&, const vector<u_short>*);
 	short SendMissingPayloadSeqNumbersToClient(std::map<u_short, string>&, const u_short&,
-		vector<u_short>&, const sockaddr_in&);
+		vector<u_short>&, const sockaddr_in&, short& client_inactive_count);
 	short SendImageMetadataToClient(const Mat&, const sockaddr_in&);
 	short SendImage(const cv::Mat&, const sockaddr_in&, queue<string>&);
 	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>&, map<u_short, u_short>&,

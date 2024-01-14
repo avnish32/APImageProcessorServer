@@ -35,7 +35,7 @@ _targetWidth pixels and height of _targetHeight pixels.
 */
 Mat Cropper::ApplyFilter(const Mat& source_image)
 {
-	msg_logger_->LogError("Cropping image. Top left corner oordinates: (" + to_string(top_left_corner_x_) + "," 
+	msg_logger_->LogError("Cropping image. Top left corner coordinates: (" + to_string(top_left_corner_x_) + "," 
 		+ to_string(top_left_corner_y_) + ") | Target width: " + to_string(target_width_) + " | Target height: " + to_string(target_height_));
 
 	//Calculate bounds of the source image to process

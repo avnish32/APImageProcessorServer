@@ -3,7 +3,7 @@
 
 using std::string;
 
-const short NUM_THREADS = 6;
+const short NUM_THREADS = 4;
 
 const short SERVER_DEFAULT_PORT = 8080;
 
@@ -17,6 +17,8 @@ const short CLIENT_NEGATIVE_ACK = 21;
 const short MIN_IMAGE_METADATA_PARAMS = 5;
 const short MIN_CLIENT_RESPONSE_PARAMS = 2;
 const short NUM_OF_IMAGE_DATA_PARAMS = 5;
+const short CLIENT_INACTIVE_LIMIT = 3;
+
 const string SIZE_PAYLOAD_KEY = "SIZE";
 const string SEQUENCE_PAYLOAD_KEY = "SEQ";
 const string RESPONSE_PAYLOAD_KEY = "RES";
@@ -34,7 +36,7 @@ const string STRING_TERMINATING_CHAR_AS_STRING = "\0";
 const string EMPTY_STRING = "";
 
 const ushort IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS = 2000;
-const ushort CLIENT_MSG_RECV_TIMEOUT_MILLIS = 5000;
+const ushort CLIENT_MSG_RECV_TIMEOUT_MILLIS = 7000;
 
 enum RotationDirection {CLOCKWISE, ANTI_CLOCKWISE};
 enum FlipDirection {HORIZONTAL, VERTICAL};

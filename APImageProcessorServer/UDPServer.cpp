@@ -93,6 +93,7 @@ void UDPServer::ProcessImageReq(const sockaddr_in& client_address)
 	msg_logger_->LogError("Acknowledgement sent. Server response code: " + to_string(server_response_code_for_client));
 
 	if (server_response_code_for_client == SERVER_NEGATIVE_ACK) {
+		RemoveClientDataFromMap(client_address_key);
 		return;
 	}
 
@@ -499,7 +500,7 @@ short UDPServer::SendServerResponseToClient(short server_response_code, const so
 		.append(to_string(server_response_code)).append(SERVER_MSG_DELIMITER)
 		.append(missing_seq_numbers_string).append(EMPTY_STRING + STRING_TERMINATING_CHAR);
 
-		msg_logger_->LogDebug("Server response string: " + server_response_payload + " | String length: " 
+	msg_logger_->LogDebug("Server response string: " + server_response_payload + " | String length: " 
 		+ to_string((u_short)server_response_payload.length()));
 
 	//'\0' not counted in string.length(), hence adding 1 to the payload size parameter below.
@@ -522,16 +523,21 @@ a negative response code to the client so client can re-send the missing payload
 */
 short UDPServer::SendMissingPayloadSeqNumbersToClient(std::map<u_short, std::string>& image_payload_seq_map, 
 	const u_short& expected_no_of_payloads,
-	vector<u_short>& missing_payload_seq_nums_in_last_timeout, const sockaddr_in& client_address)
+	vector<u_short>& missing_payload_seq_nums_in_last_timeout, const sockaddr_in& client_address, short& client_inactive_count)
 {
 	short response_code;
 	vector<u_short> missing_seq_nums_in_this_timeout = GetMissingPayloadSeqNumbers(image_payload_seq_map, expected_no_of_payloads);
 
 	if (missing_seq_nums_in_this_timeout.size() > 0) {
 		if (missing_payload_seq_nums_in_last_timeout == missing_seq_nums_in_this_timeout) {
-			//Client did not send any more payloads since last timeout. Assuming that it is inactive now.
-			msg_logger_->LogError("Client is inactive.");
-			return RESPONSE_FAILURE;
+			//Client did not send any more payloads since last timeout or all payloads were lost. Incrementing inactive count.
+			msg_logger_->LogError("Client is inactive or all packets were lost.");
+			client_inactive_count++;
+
+			if (client_inactive_count == CLIENT_INACTIVE_LIMIT) {
+				msg_logger_->LogError("Terminating connection with client as it seems to be inactive.");
+				return RESPONSE_FAILURE;
+			}
 		}
 		missing_payload_seq_nums_in_last_timeout = missing_seq_nums_in_this_timeout;
 		response_code = SendServerResponseToClient(SERVER_NEGATIVE_ACK, client_address, &missing_seq_nums_in_this_timeout);
@@ -735,6 +741,7 @@ short UDPServer::ConsumeImageDataFromClientQueue(std::queue<std::string>& client
 	short response_code = RESPONSE_FAILURE;
 	auto last_image_payload_recd_time = high_resolution_clock::now();
 	vector<u_short> missing_payload_seq_nums;
+	short client_inactive_count = 0;
 
 	while (image_bytes_left_to_receive > 0) {
 
@@ -742,7 +749,7 @@ short UDPServer::ConsumeImageDataFromClientQueue(std::queue<std::string>& client
 
 			if (HasRequestTimedOut(last_image_payload_recd_time, IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS)) {
 				response_code = SendMissingPayloadSeqNumbersToClient(image_payload_seq_map, expected_no_of_payloads,
-					missing_payload_seq_nums, client_address);
+					missing_payload_seq_nums, client_address, client_inactive_count);
 				last_image_payload_recd_time = high_resolution_clock::now();
 				if (response_code == RESPONSE_FAILURE) {
 					msg_logger_->LogError("Error while sending response to client on timeout.");
