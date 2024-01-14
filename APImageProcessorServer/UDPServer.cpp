@@ -79,11 +79,13 @@ void UDPServer::ProcessImageReq(const sockaddr_in& client_address)
 	queue<string>& client_queue = client_queue_map_[client_address_key];
 	mtx_.unlock();
 
-	
+	//Consume image metadata from queue and initialize
 	response_code = InitializeImageMetadata(image_dimensions, image_file_size, filter_type, filter_params, client_queue);
 	if (response_code == RESPONSE_FAILURE) {
 		server_response_code_for_client = SERVER_NEGATIVE_ACK;
 	}
+
+	//Send Acknowledgement to client
 	response_code = SendServerResponseToClient(server_response_code_for_client, client_address, nullptr);
 	if (response_code == RESPONSE_FAILURE) {
 		msg_logger_->LogError("ERROR: Could not send acknowledgement to client.");
@@ -106,6 +108,7 @@ void UDPServer::ProcessImageReq(const sockaddr_in& client_address)
 	string image_data_string = EMPTY_STRING;
 	map<u_short, string> image_payload_seq_map;
 	
+	//Consume image data from client queue
 	response_code = ConsumeImageDataFromClientQueue(client_queue, image_payload_seq_map, expected_number_of_payloads,
 		client_address, image_bytes_left_to_receive);
 
@@ -117,6 +120,7 @@ void UDPServer::ProcessImageReq(const sockaddr_in& client_address)
 	
 	msg_logger_->LogError("All image data received. Sending positive ACK to client.");
 
+	//Send positive acknowledgement to client upon reception of complete image
 	response_code = SendServerResponseToClient(SERVER_POSITIVE_ACK, client_address, nullptr);
 	if (response_code == RESPONSE_FAILURE) {
 		msg_logger_->LogError("ERROR: Could not send ACK to client.");
@@ -126,17 +130,15 @@ void UDPServer::ProcessImageReq(const sockaddr_in& client_address)
 
 	msg_logger_->LogError("Acknowledgement sent. Server response code: " + to_string(SERVER_POSITIVE_ACK));
 
-	//Saving original received image
+	//Construct original image from the received payloads
 	ImageProcessor image_processor(image_payload_seq_map, image_dimensions, image_file_size);
-	//imageProcessor.SaveImage();
 
 	//Apply filter to image
 	Mat filtered_image = image_processor.ApplyFilter(filter_type, filter_params);
-	//imageProcessor.SaveImage(filteredImage);
 	
 	msg_logger_->LogError("Filter applied. Sending processed image metadata to client.");
 
-	//Send filtered image dimensions
+	//Send filtered image metadata
 	response_code = SendImageMetadataToClient(filtered_image, client_address);
 	if (response_code == RESPONSE_FAILURE) {
 		msg_logger_->LogError("Could not send metadata of processed image to client.");
@@ -538,6 +540,9 @@ short UDPServer::SendMissingPayloadSeqNumbersToClient(std::map<u_short, std::str
 				msg_logger_->LogError("Terminating connection with client as it seems to be inactive.");
 				return RESPONSE_FAILURE;
 			}
+		}
+		else {
+			client_inactive_count = 0;
 		}
 		missing_payload_seq_nums_in_last_timeout = missing_seq_nums_in_this_timeout;
 		response_code = SendServerResponseToClient(SERVER_NEGATIVE_ACK, client_address, &missing_seq_nums_in_this_timeout);
