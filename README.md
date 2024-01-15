@@ -46,11 +46,24 @@ This is the server module of the Image Processing Application. This application 
 
   - More information on how to set up environment variable for OpenCV can be found [here](https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html).
 
-4. Build the application. Press Ctrl + B in Visual Studio for this.
-5. The program is ready to run now. Execution starts in APImageProcessorServer.cpp. Press Ctrl + F5 in Visual Studio to run the program.
-6. On successful execution, a console window like the one shown below should appear:
+## Running the server
+1. Open the .sln file in Visual Studio. Visual Studio 2022 is recommended. Please follow the below steps for this:
+   - Open Visual Studio and click on 'Open a project or solution'.
+
+      <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/25e90b0b-6963-4c09-81b5-c0a156fb7a0f" width = "500">
+
+   - Browse to the 'APImageProcessorServer.sln' file and click 'Open'.
+
+      <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/e61ea9c9-559f-4add-8ea7-696d86688ab1" width = "500">
+   
+2. Build the application. Press Ctrl + B in Visual Studio for this. Below message will be displayed on a successful build:
+
+   <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/d1afa649-d9ff-4621-bcfe-f7c1577893ef" width = "500">
+   
+3. The program is ready to run now. Execution starts in APImageProcessorServer.cpp. Press Ctrl + F5 in Visual Studio to run the program.
+4. On successful execution, a console window like the one shown below should appear:
 
    ![image](https://github.com/avnish32/APImageProcessorServer/assets/145987378/d03e7736-042c-468e-9c6e-d7d494aebca4)
 
-7. By default, the server runs on port 8080 on the local machine. Support to change this setting is not available currently.
+5. By default, the server runs on port 8080 on the local machine. Support to change this setting is not available currently.
 
